@@ -1,0 +1,34 @@
+on: [push, pull_request]
+
+env:
+  PUBLISH_OS: ubuntu-latest
+  PUBLISH_JAVA_VERSION: 1.8
+  PUBLISH_BRANCH: refs/heads/main
+
+jobs: 
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        java-version: [1.8, 11]
+
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.os == 'windows-latest' }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: git fetch --prune --tags --unshallow
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java-version }}
+
+      - run: ./millw -i -j 0 __.publishLocal $(pwd)/testRepo
+        if: ${{ matrix.os != 'windows-latest' }}
+      - run: .\millw.bat -i -j 0 __.publishLocal %GITHUB_WORKSPACE%/testRepo
+        if: ${{ matrix.os == 'windows-latest' }}
+
+      - run: ./millw -i -j 0 -k __.testCached
+        if: ${{ matrix.os != 'windows-latest' }}
+      - run: ./millw.bat -i -j 0 -k __.testCached
+        if: ${{ matrix.os == 'windows-latest' }}
