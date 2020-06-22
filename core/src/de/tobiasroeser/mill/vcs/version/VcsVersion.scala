@@ -79,44 +79,6 @@ trait VcsVersion extends Module {
       dirtyHash = dirtyHashCode
     )
 
-
-
-
-//    val dirtySuffix = dirtyHashCode.map(dirtyPrefix + "_")
-
-
-//
-//    tag match {
-//      case Some(t) =>
-//        (t, t)
-//      case None =>
-//        val latestTaggedVersion = os
-//          .proc('git, 'describe, "--abbrev=0", "--always", "--tags")
-//          .call()
-//          .out
-//          .trim
-//
-//        val commitsSinceLastTag =
-//          os.proc(
-//              'git,
-//              "rev-list",
-//              curHead,
-//              "--not",
-//              latestTaggedVersion,
-//              "--count"
-//            )
-//            .call()
-//            .out
-//            .trim
-//            .toInt
-//
-//        VcsState(
-//          currentRevision = curHead,
-//          lastTag = Option(latestTaggedVersion).filter(_.nonEmpty),
-//          commitsSinceLastTag = commitsSinceLastTag
-//          s"$latestTaggedVersion-$commitsSinceLastTag-${gitHead().take(6)}$dirtySuffix"
-//        )
-//    }
   }
 
 }
