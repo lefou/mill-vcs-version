@@ -1,0 +1,5 @@
+= mill-vcs-version - Derive a version from Version Control
+
+Mill plugin to derive a version from (last) git tag and edit state.
+It may support other VCS as well.
+
