@@ -1,11 +1,12 @@
+// mill plugins
+import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version:0.0.1`
+import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest:0.3.1`
+
 import mill._
-import mill.define.{Command, Module, TaskModule}
 import mill.scalalib._
 import mill.scalalib.publish._
-import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest:0.3.1`
 import de.tobiasroeser.mill.integrationtest._
-import mill.api.Loose
-import mill.main.Tasks
+import de.tobiasroeser.mill.vcs.version._
 import os.Path
 
 import scala.collection.immutable.ListMap
@@ -42,7 +43,7 @@ trait BaseModule extends CrossScalaModule with PublishModule {
     Agg(ivy"${scalaOrganization()}:scala-library:${scalaVersion()}")
   }
 
-  def publishVersion = "0.0.1" // TODO: use git-based version, eat own dog food
+  def publishVersion = VcsVersion.vcsState().format()
 
   override def javacOptions = Seq("-source", "1.8", "-target", "1.8")
   override def scalacOptions = Seq("-target:jvm-1.8")
