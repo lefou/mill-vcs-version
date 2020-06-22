@@ -42,7 +42,7 @@ trait BaseModule extends CrossScalaModule with PublishModule {
     Agg(ivy"${scalaOrganization()}:scala-library:${scalaVersion()}")
   }
 
-  def publishVersion = "0.0.0-SNAPSHOT"
+  def publishVersion = "0.0.1" // TODO: use git-based version, eat own dog food
 
   override def javacOptions = Seq("-source", "1.8", "-target", "1.8")
   override def scalacOptions = Seq("-target:jvm-1.8")

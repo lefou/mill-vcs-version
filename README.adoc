@@ -3,3 +3,8 @@
 Mill plugin to derive a version from (last) git tag and edit state.
 It may support other VCS as well.
 
+== Releases / Changelog
+
+=== mill-vsc-version 0.0.1 - 2020-06-22
+
+* Initial Release, intended for internal/test usage
