@@ -5,13 +5,14 @@ import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
 
 import mill._
 import mill.contrib.scoverage.ScoverageModule
+import mill.define.{Target, Task}
 import mill.scalalib._
 import mill.scalalib.publish._
 import de.tobiasroeser.mill.integrationtest._
 import de.tobiasroeser.mill.vcs.version._
 import os.Path
-
 import scala.collection.immutable.ListMap
+
 
 val baseDir = build.millSourcePath
 
@@ -97,4 +98,13 @@ class ItestCross(millVersion: String)  extends MillIntegrationTestModule {
   override def millSourcePath: Path = super.millSourcePath / os.up
   override def millTestVersion = millVersion
   override def pluginsUnderTest = Seq(core(millApiVersion))
+  /** Replaces the plugin jar with a scoverage-enhanced version of it. */
+  override def pluginUnderTestDetails: Task.Sequence[(PathRef, (PathRef, (PathRef, (PathRef, (PathRef, Artifact)))))] =
+    Target.traverse(pluginsUnderTest) { p =>
+      val jar = p match {
+        case p: ScoverageModule => p.scoverage.jar
+        case p => p.jar
+      }
+      jar zip (p.sourceJar zip (p.docJar zip (p.pom zip (p.ivy zip p.artifactMetadata))))
+    }
 }
