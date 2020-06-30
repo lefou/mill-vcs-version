@@ -46,7 +46,11 @@ jobs:
         if: matrix.os == env.PUBLISH_OS && matrix.java-version == env.PUBLISH_JAVA_VERSION && github.ref == env.PUBLISH_BRANCH && github.event_name == 'push'
         run: ./millw -i mill.scalalib.PublishModule/publishAll --sonatypeCreds "${{ secrets.SONATYPE_CREDS }}" --gpgArgs "--passphrase=${{ secrets.GPG_SECRET_KEY_PASS}},--batch,--yes,-a,-b,--pinentry-mode,loopback" --publishArtifacts __.publishArtifacts --readTimeout 600000 --release true --signed true
 
-      - run: ./millw -j 0 __.scoverage.xmlReport
+      - run: ./millw -i -j 0 __.scoverage.xmlReport
+        if: matrix.os != 'windows-latest'
+      - run: .\millw.bat -i -j 0 __.scoverage.xmlReport
+        if: matrix.os == 'windows-latest'
+        shell: cmd
 
       - name: Upload scoverage reports to codecov.io
         uses: codecov/codecov-action@v1
