@@ -107,4 +107,14 @@ class ItestCross(millVersion: String)  extends MillIntegrationTestModule {
       }
       jar zip (p.sourceJar zip (p.docJar zip (p.pom zip (p.ivy zip p.artifactMetadata))))
     }
+
+  override def testInvocations: Target[Seq[(PathRef, Seq[TestInvocation.Targets])]] = T{
+    Seq(
+      PathRef(millSourcePath / "src" / "01-simple") -> Seq(
+        TestInvocation.Targets(Seq("verify")),
+        TestInvocation.Targets(Seq("de.tobiasroeser.mill.vcs.version.VcsVersion/vcsState"))
+      )
+    )
+  }
+
 }
