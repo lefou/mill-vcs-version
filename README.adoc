@@ -6,6 +6,7 @@
 
 ifdef::env-github[]
 image:https://github.com/lefou/mill-vcs-version/workflows/.github/workflows/build.yml/badge.svg["Build Status (GitHub Actions)", link="https://github.com/lefou/mill-vcs-version/actions"]
+image:https://codecov.io/gh/lefou/mill-vcs-version/branch/main/graph/badge.svg[Test Coverage (Codecov.io), link="https://codecov.io/gh/lefou/mill-vcs-version"]
 endif::[]
 
 Mill plugin to derive a version from (last) git tag and edit state.

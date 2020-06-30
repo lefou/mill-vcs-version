@@ -1,8 +1,10 @@
 // mill plugins
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version:0.0.1`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest:0.3.1`
+import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
 
 import mill._
+import mill.contrib.scoverage.ScoverageModule
 import mill.scalalib._
 import mill.scalalib.publish._
 import de.tobiasroeser.mill.integrationtest._
@@ -34,7 +36,7 @@ object Deps_0_6 extends Deps {
 
 val millApiVersions: Map[String, Deps] = ListMap("0.7" -> Deps_0_7, "0.6" -> Deps_0_6)
 
-trait BaseModule extends CrossScalaModule with PublishModule {
+trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModule {
   def millApiVersion: String
   def deps: Deps = millApiVersions(millApiVersion)
   def crossScalaVersion = deps.scalaVersion
@@ -45,8 +47,8 @@ trait BaseModule extends CrossScalaModule with PublishModule {
 
   def publishVersion = VcsVersion.vcsState().format()
 
-  override def javacOptions = Seq("-source", "1.8", "-target", "1.8")
-  override def scalacOptions = Seq("-target:jvm-1.8")
+  override def javacOptions = Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8")
+  override def scalacOptions = Seq("-target:jvm-1.8", "-encoding", "UTF-8")
 
   def pomSettings = T {
     PomSettings(
@@ -58,6 +60,10 @@ trait BaseModule extends CrossScalaModule with PublishModule {
       developers = Seq(Developer("lefou", "Tobias Roeser", "https.//github.com/lefou"))
     )
   }
+
+  override def scoverageVersion = "1.4.1"
+
+  trait Tests extends ScoverageTests
 
 }
 
