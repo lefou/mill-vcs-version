@@ -6,27 +6,31 @@ import de.tobiasroeser.mill.vcs.version._
 import mill._
 import mill.define.Command
 
-
 val baseDir = build.millSourcePath
 
-def initVcs: T[Unit] = T {
-  if(!os.exists(baseDir / ".git")) {
-    T.log.info("Initializing git repo...")
-    os.proc("git", "init").call(cwd = baseDir)
-    os.proc("git", "add", "build.sc").call(cwd = baseDir)
-    os.proc("git", "commit", "-m", "first commit").call(cwd = baseDir)
-    os.proc("git", "tag", "1.2.3").call(cwd = baseDir)
-    os.proc("git", "add", "plugins.sc").call(cwd = baseDir)
-    os.proc("git", "commit", "-m", "second commit").call(cwd = baseDir)
-
+def initVcs: T[Unit] =
+  T {
+    if (!os.exists(baseDir / ".git")) {
+      T.log.info("Initializing git repo...")
+      Seq(
+        os.proc("git", "init"),
+        os.proc("git", "config", "user.email", "mill@tototec.de"),
+        os.proc("git", "config", "user.name", "Mill CI"),
+        os.proc("git", "add", "build.sc"),
+        os.proc("git", "commit", "-m", "first commit"),
+        os.proc("git", "tag", "1.2.3"),
+        os.proc("git", "add", "plugins.sc"),
+        os.proc("git", "commit", "-m", "second commit")
+      ) foreach (_.call(cwd = baseDir))
+    }
+    ()
   }
-  ()
-}
 
-def verify(): Command[Unit] = T.command {
-  initVcs()
-  val version = VcsVersion.vcsState().format()
-  T.log.info(s"version=${version}")
-  assert(version.startsWith("1.2.3-1-"))
-  ()
-}
+def verify(): Command[Unit] =
+  T.command {
+    initVcs()
+    val version = VcsVersion.vcsState().format()
+    T.log.info(s"version=${version}")
+    assert(version.startsWith("1.2.3-1-"))
+    ()
+  }
