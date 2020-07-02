@@ -37,6 +37,11 @@ object Deps_0_6 extends Deps {
 
 val millApiVersions: Map[String, Deps] = ListMap("0.7" -> Deps_0_7, "0.6" -> Deps_0_6)
 
+val millItestVersions = Seq(
+  "0.7.3", "0.7.2", "0.7.1", "0.7.0",
+  "0.6.3", "0.6.2", "0.6.1", "0.6.0"
+)
+
 trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModule {
   def millApiVersion: String
   def deps: Deps = millApiVersions(millApiVersion)
@@ -68,7 +73,6 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
 
 }
 
-
 object core extends Cross[CoreCross](millApiVersions.keysIterator.toSeq: _*)
 class CoreCross(override val millApiVersion: String) extends BaseModule {
 
@@ -87,16 +91,11 @@ class CoreCross(override val millApiVersion: String) extends BaseModule {
   }
 }
 
-val testVersions = Seq(
-  "0.7.3", "0.7.2", "0.7.1", "0.7.0",
-  "0.6.3", "0.6.2", "0.6.1", "0.6.0"
-)
-
-object itest extends Cross[ItestCross](testVersions: _*)
-class ItestCross(millVersion: String)  extends MillIntegrationTestModule {
-  val millApiVersion = millVersion.split("[.]").take(2).mkString(".")
+object itest extends Cross[ItestCross](millItestVersions: _*)
+class ItestCross(millItestVersion: String)  extends MillIntegrationTestModule {
+  val millApiVersion = millItestVersion.split("[.]").take(2).mkString(".")
   override def millSourcePath: Path = super.millSourcePath / os.up
-  override def millTestVersion = millVersion
+  override def millTestVersion = millItestVersion
   override def pluginsUnderTest = Seq(core(millApiVersion))
   /** Replaces the plugin jar with a scoverage-enhanced version of it. */
   override def pluginUnderTestDetails: Task.Sequence[(PathRef, (PathRef, (PathRef, (PathRef, (PathRef, Artifact)))))] =
@@ -111,7 +110,7 @@ class ItestCross(millVersion: String)  extends MillIntegrationTestModule {
   override def testInvocations: Target[Seq[(PathRef, Seq[TestInvocation.Targets])]] = T{
     Seq(
       PathRef(millSourcePath / "src" / "01-simple") -> Seq(
-        TestInvocation.Targets(Seq("verify")),
+        TestInvocation.Targets(Seq("-d", "verify")),
         TestInvocation.Targets(Seq("de.tobiasroeser.mill.vcs.version.VcsVersion/vcsState"))
       )
     )

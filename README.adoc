@@ -60,7 +60,8 @@ When used with its defaults, the outcome is identical to the version scheme used
 
 == Download
 
-You can download binary releases from https://search.maven.org/search?q=a:de.tobiasroeser.mill.vcs.version_2.13%20g:de.tototec[Maven Central].
+You can download binary releases from
+https://search.maven.org/artifact/de.tototec/de.tobiasroeser.mill.vcs.version_2.13[Maven Central].
 
 == License
 
