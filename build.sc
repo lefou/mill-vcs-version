@@ -17,7 +17,7 @@ import scala.collection.immutable.ListMap
 val baseDir = build.millSourcePath
 
 trait Deps {
-  def millVersion = "0.7.0"
+  def millVersion = "0.7.0" // scala-steward:off
   def scalaVersion = "2.13.2"
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
@@ -30,7 +30,7 @@ trait Deps {
 
 object Deps_0_7 extends Deps
 object Deps_0_6 extends Deps {
-  override def millVersion = "0.6.0"
+  override def millVersion = "0.6.0" // scala-steward:off
   override def scalaVersion = "2.12.10"
 }
 
