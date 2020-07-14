@@ -26,7 +26,7 @@ jobs:
       - run: ./millw -i -j 0 __.publishLocal $(pwd)/testRepo
         if: matrix.os != 'windows-latest'
       - run: .\millw.bat -i -j 0 __.publishLocal %GITHUB_WORKSPACE%/testRepo
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-latest' && matrix.java-version != '11'
         shell: cmd
 
       - run: ./millw -i -j 0 -k __.testCached
