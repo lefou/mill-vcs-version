@@ -2,7 +2,7 @@ on: [push, pull_request]
 
 env:
   PUBLISH_OS: ubuntu-latest
-  PUBLISH_JAVA_VERSION: 1.8
+  PUBLISH_JAVA_VERSION: 8
   PUBLISH_BRANCH: refs/heads/main
 
 jobs: 
@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        java-version: [1.8, 11]
+        java-version: [8, 11]
 
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.os == 'windows-latest' }}
@@ -44,7 +44,7 @@ jobs:
 
       - name: Publish to Maven Central
         if: matrix.os == env.PUBLISH_OS && matrix.java-version == env.PUBLISH_JAVA_VERSION && github.ref == env.PUBLISH_BRANCH && github.event_name == 'push'
-        run: ./millw -i mill.scalalib.PublishModule/publishAll --sonatypeCreds "${{ secrets.SONATYPE_CREDS }}" --gpgArgs "--passphrase=${{ secrets.GPG_SECRET_KEY_PASS}},--batch,--yes,-a,-b,--pinentry-mode,loopback" --publishArtifacts __.publishArtifacts --readTimeout 600000 --release true --signed true
+        run: ./millw -i mill.scalalib.PublishModule/publishAll --sonatypeCreds "${{ secrets.SONATYPE_CREDS }}" --gpgArgs "--passphrase=${{ secrets.GPG_SECRET_KEY_PASS}},--batch,--yes,-a,-b,--pinentry-mode,loopback" --publishArtifacts __.publishArtifacts --readTimeout 600000 --awaitTimeout 600000 --release true --signed true
 
       - run: ./millw -i -j 0 __.scoverage.xmlReport
         if: matrix.os != 'windows-latest'

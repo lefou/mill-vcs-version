@@ -1,6 +1,6 @@
 // mill plugins
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version:0.0.1`
-import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest:0.3.3`
+import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.7:0.4.0`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
 
 import mill._
@@ -17,8 +17,10 @@ import scala.collection.immutable.ListMap
 val baseDir = build.millSourcePath
 
 trait Deps {
-  def millVersion = "0.7.0" // scala-steward:off
-  def scalaVersion = "2.13.2"
+  def millPlatform = "0.9"
+  def millVersion = "0.9.3" // scala-steward:off
+  def scalaVersion = "2.13.4"
+  def testWithMill = Seq("0.9.3")
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
   val millMainApi = ivy"com.lihaoyi::mill-main-api:${millVersion}"
@@ -28,24 +30,29 @@ trait Deps {
   val slf4j = ivy"org.slf4j:slf4j-api:1.7.25"
 }
 
-object Deps_0_7 extends Deps
+object Deps_0_9 extends Deps
+object Deps_0_7 extends Deps {
+  override def millPlatform = "0.7"
+  override def millVersion = "0.7.0" // scala-steward:off
+  override def scalaVersion = "2.13.2"
+  override def testWithMill = Seq("0.8.0", "0.7.4", "0.7.3", "0.7.2", "0.7.1", "0.7.0")
+}
 object Deps_0_6 extends Deps {
+  override def millPlatform = "0.6"
   override def millVersion = "0.6.0" // scala-steward:off
   override def scalaVersion = "2.12.10"
+  override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", "0.6.0")
 }
 
-
-val millApiVersions: Map[String, Deps] = ListMap("0.7" -> Deps_0_7, "0.6" -> Deps_0_6)
-
-val millItestVersions = Seq(
-  "0.7.3", "0.7.2", "0.7.1", "0.7.0",
-  "0.6.3", "0.6.2", "0.6.1", "0.6.0"
-)
+val crossDeps = Seq(Deps_0_9, Deps_0_7, Deps_0_6)
+val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
+val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 
 trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModule {
   def millApiVersion: String
-  def deps: Deps = millApiVersions(millApiVersion)
+  def deps: Deps = millApiVersions.toMap.apply(millApiVersion)
   def crossScalaVersion = deps.scalaVersion
+  override def artifactSuffix: T[String] = s"_mill${deps.millPlatform}_${artifactScalaVersion()}"
 
   override def ivyDeps = T {
     Agg(ivy"${scalaOrganization()}:scala-library:${scalaVersion()}")
@@ -73,12 +80,12 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
 
 }
 
-object core extends Cross[CoreCross](millApiVersions.keysIterator.toSeq: _*)
+object core extends Cross[CoreCross](millApiVersions.map(_._1): _*)
 class CoreCross(override val millApiVersion: String) extends BaseModule {
 
   override def artifactName = "de.tobiasroeser.mill.vcs.version"
 
-  override def skipIdea: Boolean = millApiVersion != millApiVersions.head._1
+  override def skipIdea: Boolean = deps != crossDeps.head
 
   override def compileIvyDeps = Agg(
     deps.millMain,
@@ -91,9 +98,9 @@ class CoreCross(override val millApiVersion: String) extends BaseModule {
   }
 }
 
-object itest extends Cross[ItestCross](millItestVersions: _*)
+object itest extends Cross[ItestCross](millItestVersions.map(_._1): _*)
 class ItestCross(millItestVersion: String)  extends MillIntegrationTestModule {
-  val millApiVersion = millItestVersion.split("[.]").take(2).mkString(".")
+  val millApiVersion = millItestVersions.toMap.apply(millItestVersion).millPlatform
   override def millSourcePath: Path = super.millSourcePath / os.up
   override def millTestVersion = millItestVersion
   override def pluginsUnderTest = Seq(core(millApiVersion))

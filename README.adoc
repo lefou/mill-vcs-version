@@ -1,5 +1,6 @@
 = mill-vcs-version - Derive a version from Version Control
 :version: 0.0.1
+:mill-platform: 0.9
 :project-home: https://github.com/lefou/mill-vcs-version
 :toc:
 :toc-placement: preamble
@@ -24,7 +25,7 @@ import mill.scalalib._
 import mill.define._
 
 // Load the plugin from Maven Central via ivy/coursier
-import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version:{version}`
+import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill{mill-platform}:{version}`
 import de.tobiasroeser.mill.vcs.version.VcsVersion
 
 object main extends JavaModule with PublishModule {
@@ -63,6 +64,19 @@ When used with its defaults, the outcome is identical to the version scheme used
 You can download binary releases from
 https://search.maven.org/artifact/de.tototec/de.tobiasroeser.mill.vcs.version_2.13[Maven Central].
 
+
+Please make sure to use the correct _mill platform suffix_ matching your used mill version.
+
+.Mill Platform suffix
+[options="header"]
+|===
+| mill version  | mill platform | suffix | example
+| 0.9.3 -       | 0.9 | `_mill0.9` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.9:{version}````
+| 0.7.0 - 0.8.0 | 0.7 | `_mill0.7` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.7:{version}````
+| 0.6.0 - 0.6.3 | 0.6 | `_mill0.6` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.6:{version}````
+|===
+
+
 == License
 
 This project is published under the https://www.apache.org/licenses/LICENSE-2.0[Apache License, Version 2.0].
@@ -90,6 +104,11 @@ Contributing::
 
 
 == Releases / Changelog
+
+=== mill-vsc-version main HEAD
+
+* Support for mill API 0.9.3
+* Introduce a new artifact name suffix (`_mill0.9` for mil 0.9.3) to support multiple mill API versions.
 
 === mill-vsc-version 0.0.1 - 2020-06-22
 
