@@ -1,5 +1,5 @@
 = mill-vcs-version - Derive a version from Version Control
-:version: 0.0.1
+:version: 0.1.0
 :mill-platform: 0.9
 :project-home: https://github.com/lefou/mill-vcs-version
 :toc:
@@ -105,7 +105,7 @@ Contributing::
 
 == Releases / Changelog
 
-=== mill-vsc-version main HEAD
+=== mill-vsc-version 0.1.0 - 2020-12-01
 
 * Support for mill API 0.9.3
 * Introduce a new artifact name suffix (`_mill0.9` for mil 0.9.3) to support multiple mill API versions.
