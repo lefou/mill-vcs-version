@@ -14,8 +14,9 @@ trait VcsVersion extends Module {
    *
    * @return A tuple of (the latest tag, the calculated version string)
    */
-  def vcsState: T[VcsState] = T.input {
+  def vcsState: T[VcsState] = T.input { calcVcsState() }
 
+  private[this] def calcVcsState(): VcsState = {
     val curHead = os.proc('git, "rev-parse", "HEAD").call(cwd = vcsBasePath).out.trim
 
     val exactTag =
@@ -71,7 +72,6 @@ trait VcsVersion extends Module {
       commitsSinceLastTag = commitsSinceLastTag,
       dirtyHash = dirtyHashCode
     )
-
   }
 
 }

@@ -97,22 +97,23 @@ class CoreCross(override val millApiVersion: String) extends BaseModule {
 }
 
 object itest extends Cross[ItestCross](millItestVersions.map(_._1): _*)
-class ItestCross(millItestVersion: String)  extends MillIntegrationTestModule {
+class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
   val millApiVersion = millItestVersions.toMap.apply(millItestVersion).millPlatform
   override def millSourcePath: Path = super.millSourcePath / os.up
   override def millTestVersion = millItestVersion
   override def pluginsUnderTest = Seq(core(millApiVersion))
+
   /** Replaces the plugin jar with a scoverage-enhanced version of it. */
   override def pluginUnderTestDetails: Task.Sequence[(PathRef, (PathRef, (PathRef, (PathRef, (PathRef, Artifact)))))] =
     Target.traverse(pluginsUnderTest) { p =>
       val jar = p match {
         case p: ScoverageModule => p.scoverage.jar
-        case p => p.jar
+        case p                  => p.jar
       }
       jar zip (p.sourceJar zip (p.docJar zip (p.pom zip (p.ivy zip p.artifactMetadata))))
     }
 
-  override def testInvocations: Target[Seq[(PathRef, Seq[TestInvocation.Targets])]] = T{
+  override def testInvocations: Target[Seq[(PathRef, Seq[TestInvocation.Targets])]] = T {
     super.testInvocations().map {
       case (pr, _) if pr.path.last == "01-simple" =>
         pr -> Seq(
