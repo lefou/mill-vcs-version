@@ -62,7 +62,7 @@ When used with its defaults, the outcome is identical to the version scheme used
 == Download
 
 You can download binary releases from
-https://search.maven.org/artifact/de.tototec/de.tobiasroeser.mill.vcs.version_2.13[Maven Central].
+https://search.maven.org/artifact/de.tototec/de.tobiasroeser.mill.vcs.version_mill{mill-platform}_2.13[Maven Central].
 
 
 Please make sure to use the correct _mill platform suffix_ matching your used mill version.
