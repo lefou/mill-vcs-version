@@ -11,8 +11,6 @@ import mill.scalalib.publish._
 import de.tobiasroeser.mill.integrationtest._
 import de.tobiasroeser.mill.vcs.version._
 import os.Path
-import scala.collection.immutable.ListMap
-
 
 val baseDir = build.millSourcePath
 
