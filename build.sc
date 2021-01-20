@@ -1,6 +1,6 @@
 // mill plugins
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version:0.0.1`
-import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.7:0.4.0`
+import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.7:0.4.0-5-9dce73`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
 
 import mill._
@@ -115,12 +115,14 @@ class ItestCross(millItestVersion: String)  extends MillIntegrationTestModule {
     }
 
   override def testInvocations: Target[Seq[(PathRef, Seq[TestInvocation.Targets])]] = T{
-    Seq(
-      PathRef(millSourcePath / "src" / "01-simple") -> Seq(
-        TestInvocation.Targets(Seq("-d", "verify")),
-        TestInvocation.Targets(Seq("de.tobiasroeser.mill.vcs.version.VcsVersion/vcsState"))
-      )
-    )
+    super.testInvocations().map {
+      case (pr, _) if pr.path.last == "01-simple" =>
+        pr -> Seq(
+          TestInvocation.Targets(Seq("-d", "verify")),
+          TestInvocation.Targets(Seq("de.tobiasroeser.mill.vcs.version.VcsVersion/vcsState"))
+        )
+      case (pr, _) => pr -> Seq(TestInvocation.Targets(Seq("-d", "verify")))
+    }
   }
 
 }
