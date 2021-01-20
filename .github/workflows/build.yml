@@ -23,21 +23,21 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
 
-      - run: ./millw -i -j 0 __.publishLocal $(pwd)/testRepo
+      - run: ./millw -i __.publishLocal $(pwd)/testRepo
         if: matrix.os != 'windows-latest'
-      - run: .\millw.bat -i -j 0 __.publishLocal %GITHUB_WORKSPACE%/testRepo
+      - run: .\millw.bat -i __.publishLocal %GITHUB_WORKSPACE%/testRepo
         if: matrix.os == 'windows-latest'
         shell: cmd
 
-      - run: ./millw -i -j 0 -k __.testCached
+      - run: ./millw -i -k __.testCached
         if: matrix.os != 'windows-latest'
-      - run: ./millw.bat -i -j 0 -k __.testCached
+      - run: ./millw.bat -i -k __.testCached
         if: matrix.os == 'windows-latest'
         shell: cmd
 
-      - run: ./millw -i -j 0 __.scoverage.xmlReport
+      - run: ./millw -i __.scoverage.xmlReport
         if: matrix.os != 'windows-latest'
-      - run: .\millw.bat -i -j 0 __.scoverage.xmlReport
+      - run: .\millw.bat -i __.scoverage.xmlReport
         if: matrix.os == 'windows-latest'
         shell: cmd
 
