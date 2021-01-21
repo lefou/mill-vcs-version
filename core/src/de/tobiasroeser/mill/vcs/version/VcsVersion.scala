@@ -4,6 +4,8 @@ import scala.util.control.NonFatal
 
 import mill.T
 import mill.define.{Discover, ExternalModule, Module}
+import mill.api.Result
+import os.{CommandResult, SubprocessException}
 
 trait VcsVersion extends Module {
 
@@ -16,8 +18,13 @@ trait VcsVersion extends Module {
    */
   def vcsState: T[VcsState] = T.input { calcVcsState() }
 
-  private[this] def calcVcsState(): VcsState = {
-    val curHead = os.proc('git, "rev-parse", "HEAD").call(cwd = vcsBasePath).out.trim
+  private[this] def calcVcsState(): Result[VcsState] = {
+    val curHead = try {
+      os.proc('git, "rev-parse", "HEAD").call(cwd = vcsBasePath).out.trim
+    } catch {
+      case e: SubprocessException =>
+        return Result.Failure(s"${vcsBasePath} is not a git repository.")
+    }
 
     val exactTag =
       try {
@@ -66,12 +73,12 @@ trait VcsVersion extends Module {
       case s  => Some(Integer.toHexString(s.hashCode))
     }
 
-    new VcsState(
+    Result.Success(new VcsState(
       currentRevision = curHead,
       lastTag = lastTag,
       commitsSinceLastTag = commitsSinceLastTag,
       dirtyHash = dirtyHashCode
-    )
+    ))
   }
 
 }
