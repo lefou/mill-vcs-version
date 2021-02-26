@@ -17,7 +17,7 @@ val baseDir = build.millSourcePath
 trait Deps {
   def millPlatform = "0.9"
   def millVersion = "0.9.3" // scala-steward:off
-  def scalaVersion = "2.13.4"
+  def scalaVersion = "2.13.5"
   def testWithMill = Seq("0.9.3")
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
