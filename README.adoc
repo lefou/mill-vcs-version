@@ -16,7 +16,7 @@ It may support other VCS as well.
 == Quickstart
 
 To use a git-derived version for publishing, all you need is to use `VcsVersion.vcsState` target.
-`VcsVersion` is an external mill module and as such can be use out of the box without further configuration.
+`VcsVersion` is an external mill module and as such can be used out of the box without further configuration.
 
 [source,scala,subs="attributes,verbatim"]
 ----
@@ -36,6 +36,7 @@ object main extends JavaModule with PublishModule {
 == Formatting options
 
 The formatted version is base on
+
 * the latest git tag
 * the count of commits since the latest tag
 * the difference between the latest commit and the actual local state (changes or new files)
