@@ -17,14 +17,14 @@ val baseDir = build.millSourcePath
 trait Deps {
   def millPlatform = "0.9"
   def millVersion = "0.9.3" // scala-steward:off
-  def scalaVersion = "2.13.4"
+  def scalaVersion = "2.13.5"
   def testWithMill = Seq("0.9.5", "0.9.4", "0.9.3")
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
   val millMainApi = ivy"com.lihaoyi::mill-main-api:${millVersion}"
   val millScalalib = ivy"com.lihaoyi::mill-scalalib:${millVersion}"
   val millScalalibApi = ivy"com.lihaoyi::mill-scalalib-api:${millVersion}"
-  val scalaTest = ivy"org.scalatest::scalatest:3.2.4"
+  val scalaTest = ivy"org.scalatest::scalatest:3.2.6"
   val slf4j = ivy"org.slf4j:slf4j-api:1.7.25"
 }
 
@@ -32,7 +32,7 @@ object Deps_0_9 extends Deps
 object Deps_0_7 extends Deps {
   override def millPlatform = "0.7"
   override def millVersion = "0.7.0" // scala-steward:off
-  override def scalaVersion = "2.13.2"
+  override def scalaVersion = "2.13.5"
   override def testWithMill = Seq("0.8.0", "0.7.4", "0.7.3", "0.7.2", "0.7.1", "0.7.0")
 }
 object Deps_0_6 extends Deps {
