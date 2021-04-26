@@ -24,7 +24,7 @@ trait Deps {
   val millMainApi = ivy"com.lihaoyi::mill-main-api:${millVersion}"
   val millScalalib = ivy"com.lihaoyi::mill-scalalib:${millVersion}"
   val millScalalibApi = ivy"com.lihaoyi::mill-scalalib-api:${millVersion}"
-  val scalaTest = ivy"org.scalatest::scalatest:3.2.7"
+  val scalaTest = ivy"org.scalatest::scalatest:3.2.8"
   val slf4j = ivy"org.slf4j:slf4j-api:1.7.25"
 }
 
