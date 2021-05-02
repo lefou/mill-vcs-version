@@ -38,7 +38,7 @@ object Deps_0_7 extends Deps {
 object Deps_0_6 extends Deps {
   override def millPlatform = "0.6"
   override def millVersion = "0.6.0" // scala-steward:off
-  override def scalaVersion = "2.12.10"
+  override def scalaVersion = "2.12.13"
   override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", "0.6.0")
 }
 
@@ -72,7 +72,14 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
     )
   }
 
-  override def scoverageVersion = "1.4.1"
+  override def scoverageVersion = "1.4.4"
+  // we need to adapt to changed publishing policy - patch-level
+  override def scoverageRuntimeDep = T {
+    ivy"org.scoverage:::scalac-scoverage-runtime:${scoverageVersion()}"
+  }
+  override def scoveragePluginDep = T {
+    ivy"org.scoverage:::scalac-scoverage-plugin:${scoverageVersion()}"
+  }
 
   trait Tests extends ScoverageTests
 
