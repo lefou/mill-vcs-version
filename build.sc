@@ -50,6 +50,7 @@ val crossDeps = Seq(Deps_0_9, Deps_0_7, Deps_0_6)
 val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
 val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 
+/** Shared configuration. */
 trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModule {
   def millApiVersion: String
   def deps: Deps = millApiVersions.toMap.apply(millApiVersion)
@@ -86,6 +87,7 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
 
 }
 
+/* The actual mill plugin compilied against different mill APIs. */
 object core extends Cross[CoreCross](millApiVersions.map(_._1): _*)
 class CoreCross(override val millApiVersion: String) extends BaseModule {
 
@@ -104,6 +106,7 @@ class CoreCross(override val millApiVersion: String) extends BaseModule {
   }
 }
 
+/** Integration tests. */
 object itest extends Cross[ItestCross](millItestVersions.map(_._1): _*) with TaskModule {
   override def defaultCommandName(): String = "test"
   def testCached: T[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).testCached
