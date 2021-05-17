@@ -2,10 +2,9 @@
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.9:0.1.0`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.0-5-9dce73`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
-
 import mill._
 import mill.contrib.scoverage.ScoverageModule
-import mill.define.{Target, Task}
+import mill.define.{Command, Target, Task, TaskModule}
 import mill.scalalib._
 import mill.scalalib.publish._
 import de.tobiasroeser.mill.integrationtest._
@@ -15,10 +14,10 @@ import os.Path
 val baseDir = build.millSourcePath
 
 trait Deps {
-  def millPlatform = "0.9"
-  def millVersion = "0.9.3" // scala-steward:off
-  def scalaVersion = "2.13.5"
-  def testWithMill = Seq("0.9.5", "0.9.4", "0.9.3")
+  def millPlatform: String
+  def millVersion: String
+  def scalaVersion: String
+  def testWithMill: Seq[String]
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
   val millMainApi = ivy"com.lihaoyi::mill-main-api:${millVersion}"
@@ -28,7 +27,12 @@ trait Deps {
   val slf4j = ivy"org.slf4j:slf4j-api:1.7.25"
 }
 
-object Deps_0_9 extends Deps
+object Deps_0_9 extends Deps {
+  override def millPlatform = "0.9"
+  override def millVersion = "0.9.3" // scala-steward:off
+  override def scalaVersion = "2.13.5"
+  override def testWithMill = Seq("0.9.7", "0.9.6", "0.9.5", "0.9.4", "0.9.3")
+}
 object Deps_0_7 extends Deps {
   override def millPlatform = "0.7"
   override def millVersion = "0.7.0" // scala-steward:off
@@ -46,6 +50,7 @@ val crossDeps = Seq(Deps_0_9, Deps_0_7, Deps_0_6)
 val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
 val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 
+/** Shared configuration. */
 trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModule {
   def millApiVersion: String
   def deps: Deps = millApiVersions.toMap.apply(millApiVersion)
@@ -72,12 +77,17 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
     )
   }
 
-  override def scoverageVersion = "1.4.1"
+  override def scoverageVersion = "1.4.6"
+  // we need to adapt to changed publishing policy - patch-level
+  override def scoveragePluginDep = T {
+    ivy"org.scoverage:::scalac-scoverage-plugin:${scoverageVersion()}"
+  }
 
   trait Tests extends ScoverageTests
 
 }
 
+/* The actual mill plugin compilied against different mill APIs. */
 object core extends Cross[CoreCross](millApiVersions.map(_._1): _*)
 class CoreCross(override val millApiVersion: String) extends BaseModule {
 
@@ -96,7 +106,12 @@ class CoreCross(override val millApiVersion: String) extends BaseModule {
   }
 }
 
-object itest extends Cross[ItestCross](millItestVersions.map(_._1): _*)
+/** Integration tests. */
+object itest extends Cross[ItestCross](millItestVersions.map(_._1): _*) with TaskModule {
+  override def defaultCommandName(): String = "test"
+  def testCached: T[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).testCached
+  def test(args: String*): Command[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).test()
+}
 class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
   val millApiVersion = millItestVersions.toMap.apply(millItestVersion).millPlatform
   override def millSourcePath: Path = super.millSourcePath / os.up
