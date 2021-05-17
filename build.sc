@@ -2,10 +2,9 @@
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.9:0.1.0`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.0-5-9dce73`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
-
 import mill._
 import mill.contrib.scoverage.ScoverageModule
-import mill.define.{Target, Task}
+import mill.define.{Command, Target, Task, TaskModule}
 import mill.scalalib._
 import mill.scalalib.publish._
 import de.tobiasroeser.mill.integrationtest._
@@ -100,7 +99,11 @@ class CoreCross(override val millApiVersion: String) extends BaseModule {
   }
 }
 
-object itest extends Cross[ItestCross](millItestVersions.map(_._1): _*)
+object itest extends Cross[ItestCross](millItestVersions.map(_._1): _*) with TaskModule {
+  override def defaultCommandName(): String = "test"
+  def testCached: T[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).testCached
+  def test(args: String*): Command[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).test()
+}
 class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
   val millApiVersion = millItestVersions.toMap.apply(millItestVersion).millPlatform
   override def millSourcePath: Path = super.millSourcePath / os.up
