@@ -72,11 +72,8 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
     )
   }
 
-  override def scoverageVersion = "1.4.4"
+  override def scoverageVersion = "1.4.6"
   // we need to adapt to changed publishing policy - patch-level
-  override def scoverageRuntimeDep = T {
-    ivy"org.scoverage:::scalac-scoverage-runtime:${scoverageVersion()}"
-  }
   override def scoveragePluginDep = T {
     ivy"org.scoverage:::scalac-scoverage-plugin:${scoverageVersion()}"
   }
