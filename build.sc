@@ -1,6 +1,6 @@
 // mill plugins
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.9:0.1.0`
-import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.0-5-9dce73`
+import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.0-8-b13f82`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
 import mill._
 import mill.contrib.scoverage.ScoverageModule
@@ -24,6 +24,9 @@ trait Deps {
   val millScalalib = ivy"com.lihaoyi::mill-scalalib:${millVersion}"
   val millScalalibApi = ivy"com.lihaoyi::mill-scalalib-api:${millVersion}"
   val scalaTest = ivy"org.scalatest::scalatest:3.2.9"
+  val scoverageVersion = "1.4.7"
+  val scoveragePlugin = ivy"org.scoverage:::scalac-scoverage-plugin:${scoverageVersion}"
+  val scoverageRuntime = ivy"org.scoverage::scalac-scoverage-runtime:${scoverageVersion}"
   val slf4j = ivy"org.slf4j:slf4j-api:1.7.25"
 }
 
@@ -77,10 +80,10 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
     )
   }
 
-  override def scoverageVersion = "1.4.6"
+  override def scoverageVersion = deps.scoverageVersion
   // we need to adapt to changed publishing policy - patch-level
   override def scoveragePluginDep = T {
-    ivy"org.scoverage:::scalac-scoverage-plugin:${scoverageVersion()}"
+    deps.scoveragePlugin
   }
 
   trait Tests extends ScoverageTests
@@ -113,7 +116,10 @@ object itest extends Cross[ItestCross](millItestVersions.map(_._1): _*) with Tas
   def test(args: String*): Command[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).test()
 }
 class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
+
   val millApiVersion = millItestVersions.toMap.apply(millItestVersion).millPlatform
+  def deps: Deps = millApiVersions.toMap.apply(millApiVersion)
+
   override def millSourcePath: Path = super.millSourcePath / os.up
   override def millTestVersion = millItestVersion
   override def pluginsUnderTest = Seq(core(millApiVersion))
@@ -137,6 +143,22 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
         )
       case (pr, _) => pr -> Seq(TestInvocation.Targets(Seq("-d", "verify")))
     }
+  }
+
+  override def perTestResources = T.sources { Seq(generatedSharedSrc()) }
+  def generatedSharedSrc = T{
+    os.write(
+      T.dest / "shared.sc",
+      s"""import $$ivy.`${
+        deps.scoverageRuntime.dep.module.organization.value
+      }::${
+        deps.scoverageRuntime.dep.module.name.value
+      }:${
+        deps.scoverageRuntime.dep.version
+      }`
+        |""".stripMargin
+    )
+    PathRef(T.dest)
   }
 
 }
