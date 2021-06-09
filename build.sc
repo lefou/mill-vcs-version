@@ -1,6 +1,6 @@
 // mill plugins
-import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.9:0.1.0`
-import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.0-8-b13f82`
+import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.9:0.1.1`
+import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.1`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
 import mill._
 import mill.contrib.scoverage.ScoverageModule
@@ -34,7 +34,7 @@ object Deps_0_9 extends Deps {
   override def millPlatform = "0.9"
   override def millVersion = "0.9.3" // scala-steward:off
   override def scalaVersion = "2.13.5"
-  override def testWithMill = Seq("0.9.7", "0.9.6", "0.9.5", "0.9.4", "0.9.3")
+  override def testWithMill = Seq("0.9.8", "0.9.7", "0.9.6", "0.9.5", "0.9.4", "0.9.3")
 }
 object Deps_0_7 extends Deps {
   override def millPlatform = "0.7"
