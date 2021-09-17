@@ -1,6 +1,6 @@
 // mill plugins
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.9:0.1.1`
-import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.1`
+import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.1-15-e48bb3`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
 import mill._
 import mill.contrib.scoverage.ScoverageModule
@@ -30,11 +30,17 @@ trait Deps {
   val slf4j = ivy"org.slf4j:slf4j-api:1.7.25"
 }
 
+object Deps_0_10_0_M2 extends Deps {
+  override def millPlatform = "0.10.0-M2"
+  override def millVersion = "0.10.0-M2" // scala-steward:off
+  override def scalaVersion = "2.13.6"
+  override def testWithMill = Seq("0.10.0-M2")
+}
 object Deps_0_9 extends Deps {
   override def millPlatform = "0.9"
   override def millVersion = "0.9.3" // scala-steward:off
   override def scalaVersion = "2.13.6"
-  override def testWithMill = Seq("0.9.8", "0.9.7", "0.9.6", "0.9.5", "0.9.4", "0.9.3")
+  override def testWithMill = Seq("0.9.9", "0.9.8", "0.9.7", "0.9.6", "0.9.5", "0.9.4", "0.9.3")
 }
 object Deps_0_7 extends Deps {
   override def millPlatform = "0.7"
@@ -49,7 +55,7 @@ object Deps_0_6 extends Deps {
   override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", "0.6.0")
 }
 
-val crossDeps = Seq(Deps_0_9, Deps_0_7, Deps_0_6)
+val crossDeps = Seq(Deps_0_10_0_M2, Deps_0_9, Deps_0_7, Deps_0_6)
 val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
 val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 
@@ -103,9 +109,8 @@ class CoreCross(override val millApiVersion: String) extends BaseModule {
     deps.millScalalib
   )
 
-  object test extends Tests {
+  object test extends Tests with TestModule.ScalaTest {
     override def ivyDeps = Agg(deps.scalaTest)
-    def testFrameworks = Seq("org.scalatest.tools.Framework")
   }
 }
 
