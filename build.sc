@@ -1,6 +1,6 @@
 // mill plugins
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.9:0.1.1`
-import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.1-15-e48bb3`
+import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.1-16-63f11c`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
 import mill._
 import mill.contrib.scoverage.ScoverageModule
@@ -128,23 +128,6 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
   override def millSourcePath: Path = super.millSourcePath / os.up
   override def millTestVersion = millItestVersion
   override def pluginsUnderTest = Seq(core(millApiVersion))
-
-  override def downloadMillTestVersion: T[PathRef] = {
-    if (millItestVersion == Deps_0_10_0_M2.millVersion) T {
-      println("Use Coursier")
-      core(millApiVersion)
-        .resolveDeps(T.task {
-          Agg(ivy"com.lihaoyi::mill-dev:${millItestVersion}".exclude("*" -> "*"))
-        })()
-        .iterator
-        .next()
-    }
-    else
-      T {
-        println("Use download")
-        super.downloadMillTestVersion()
-      }
-  }
 
   /** Replaces the plugin jar with a scoverage-enhanced version of it. */
   override def pluginUnderTestDetails: Task.Sequence[(PathRef, (PathRef, (PathRef, (PathRef, (PathRef, Artifact)))))] =
