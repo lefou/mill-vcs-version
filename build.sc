@@ -130,16 +130,18 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
   override def pluginsUnderTest = Seq(core(millApiVersion))
 
   override def downloadMillTestVersion: T[PathRef] = {
-    if (millItestVersions == Deps_0_10_0_M2.millVersion) T {
+    if (millItestVersion == Deps_0_10_0_M2.millVersion) T {
+      println("Use Coursier")
       core(millApiVersion)
         .resolveDeps(T.task {
-          Agg(ivy"com.lihaoyi::mill-dev:0.10.0-M2".exclude("*" -> "*"))
+          Agg(ivy"com.lihaoyi::mill-dev:${millItestVersion}".exclude("*" -> "*"))
         })()
         .iterator
         .next()
     }
     else
       T {
+        println("Use download")
         super.downloadMillTestVersion()
       }
   }
