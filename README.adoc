@@ -72,7 +72,8 @@ Please make sure to use the correct _mill platform suffix_ matching your used mi
 [options="header"]
 |===
 | mill version  | mill platform | suffix | example
-| 0.9.3 -       | 0.9 | `_mill0.9` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.9:{version}````
+| 0.10.0-M2 | 0.10.0-M2 | `_mill0.10.0-M2` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.10.0-M2:{version}````
+| 0.9.3 - 0.9.9      | 0.9 | `_mill0.9` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.9:{version}````
 | 0.7.0 - 0.8.0 | 0.7 | `_mill0.7` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.7:{version}````
 | 0.6.0 - 0.6.3 | 0.6 | `_mill0.6` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.6:{version}````
 |===
@@ -106,7 +107,11 @@ Contributing::
 
 == Releases / Changelog
 
-=== mill-vsc-version 0.1.1 - 2020-01-21
+=== main
+
+* Added support for mill 0.10.0-M2
+
+=== mill-vsc-version 0.1.1 - 2021-01-21
 
 * Fixed handling of repos without any (previous) tag
 
