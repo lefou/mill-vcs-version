@@ -34,25 +34,25 @@ object Deps_0_10_0_M2 extends Deps {
   override def millPlatform = "0.10.0-M2"
   override def millVersion = "0.10.0-M2" // scala-steward:off
   override def scalaVersion = "2.13.6"
-  override def testWithMill = Seq("0.10.0-M2")
+  override def testWithMill = Seq(millVersion)
 }
 object Deps_0_9 extends Deps {
   override def millPlatform = "0.9"
   override def millVersion = "0.9.3" // scala-steward:off
   override def scalaVersion = "2.13.6"
-  override def testWithMill = Seq("0.9.9", "0.9.8", "0.9.7", "0.9.6", "0.9.5", "0.9.4", "0.9.3")
+  override def testWithMill = Seq("0.9.9", "0.9.8", "0.9.7", "0.9.6", "0.9.5", "0.9.4", millVersion)
 }
 object Deps_0_7 extends Deps {
   override def millPlatform = "0.7"
   override def millVersion = "0.7.0" // scala-steward:off
   override def scalaVersion = "2.13.6"
-  override def testWithMill = Seq("0.8.0", "0.7.4", "0.7.3", "0.7.2", "0.7.1", "0.7.0")
+  override def testWithMill = Seq("0.8.0", "0.7.4", "0.7.3", "0.7.2", "0.7.1", millVersion)
 }
 object Deps_0_6 extends Deps {
   override def millPlatform = "0.6"
   override def millVersion = "0.6.0" // scala-steward:off
   override def scalaVersion = "2.12.15"
-  override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", "0.6.0")
+  override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", millVersion)
 }
 
 val crossDeps = Seq(Deps_0_10_0_M2, Deps_0_9, Deps_0_7, Deps_0_6)
@@ -130,14 +130,18 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
   override def pluginsUnderTest = Seq(core(millApiVersion))
 
   override def downloadMillTestVersion: T[PathRef] = {
-    if (millItestVersions == "0.10.0-M2") T {
-      core(millApiVersion).resolveDeps(T.task {
-        Agg(ivy"com.lihaoyi::mill-dev:0.10.0-M2".exclude("*" -> "*"))
-      })().iterator.next()
+    if (millItestVersions == Deps_0_10_0_M2.millVersion) T {
+      core(millApiVersion)
+        .resolveDeps(T.task {
+          Agg(ivy"com.lihaoyi::mill-dev:0.10.0-M2".exclude("*" -> "*"))
+        })()
+        .iterator
+        .next()
     }
-    else {
-      super.downloadMillTestVersion
-    }
+    else
+      T {
+        super.downloadMillTestVersion()
+      }
   }
 
   /** Replaces the plugin jar with a scoverage-enhanced version of it. */
@@ -162,17 +166,11 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
   }
 
   override def perTestResources = T.sources { Seq(generatedSharedSrc()) }
-  def generatedSharedSrc = T{
+  def generatedSharedSrc = T {
     os.write(
       T.dest / "shared.sc",
-      s"""import $$ivy.`${
-        deps.scoverageRuntime.dep.module.organization.value
-      }::${
-        deps.scoverageRuntime.dep.module.name.value
-      }:${
-        deps.scoverageRuntime.dep.version
-      }`
-        |""".stripMargin
+      s"""import $$ivy.`${deps.scoverageRuntime.dep.module.organization.value}::${deps.scoverageRuntime.dep.module.name.value}:${deps.scoverageRuntime.dep.version}`
+         |""".stripMargin
     )
     PathRef(T.dest)
   }
