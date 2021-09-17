@@ -129,6 +129,17 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
   override def millTestVersion = millItestVersion
   override def pluginsUnderTest = Seq(core(millApiVersion))
 
+  override def downloadMillTestVersion: T[PathRef] = {
+    if (millItestVersions == "0.10.0-M2") T {
+      core(millApiVersion).resolveDeps(T.task {
+        Agg(ivy"com.lihaoyi::mill-dev:0.10.0-M2".exclude("*" -> "*"))
+      })().iterator.next()
+    }
+    else {
+      super.downloadMillTestVersion
+    }
+  }
+
   /** Replaces the plugin jar with a scoverage-enhanced version of it. */
   override def pluginUnderTestDetails: Task.Sequence[(PathRef, (PathRef, (PathRef, (PathRef, (PathRef, Artifact)))))] =
     Target.traverse(pluginsUnderTest) { p =>
