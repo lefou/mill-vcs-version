@@ -30,9 +30,9 @@ trait Deps {
   val slf4j = ivy"org.slf4j:slf4j-api:1.7.25"
 }
 
-object Deps_0_10_0_M2 extends Deps {
-  override def millPlatform = "0.10.0-M4"
-  override def millVersion = "0.10.0-M4" // scala-steward:off
+object Deps_0_10_0 extends Deps {
+  override def millPlatform = "0.10.0-M5"
+  override def millVersion = "0.10.0-M5" // scala-steward:off
   override def scalaVersion = "2.13.7"
   override def testWithMill = Seq(millVersion)
 }
@@ -40,7 +40,7 @@ object Deps_0_9 extends Deps {
   override def millPlatform = "0.9"
   override def millVersion = "0.9.3" // scala-steward:off
   override def scalaVersion = "2.13.7"
-  override def testWithMill = Seq("0.9.9", "0.9.8", "0.9.7", "0.9.6", "0.9.5", "0.9.4", millVersion)
+  override def testWithMill = Seq("0.9.11", "0.9.10", "0.9.9", "0.9.8", "0.9.7", "0.9.6", "0.9.5", "0.9.4", millVersion)
 }
 object Deps_0_7 extends Deps {
   override def millPlatform = "0.7"
@@ -55,7 +55,7 @@ object Deps_0_6 extends Deps {
   override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", millVersion)
 }
 
-val crossDeps = Seq(Deps_0_10_0_M2, Deps_0_9, Deps_0_7, Deps_0_6)
+val crossDeps = Seq(Deps_0_10_0, Deps_0_9, Deps_0_7, Deps_0_6)
 val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
 val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 
