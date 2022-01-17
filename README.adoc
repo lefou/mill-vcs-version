@@ -1,5 +1,5 @@
 = mill-vcs-version - Derive a version from Version Control
-:version: 0.1.3
+:version: 0.1.4
 :mill-platform: 0.10
 :project-home: https://github.com/lefou/mill-vcs-version
 :toc:
@@ -107,7 +107,13 @@ Contributing::
 
 == Releases / Changelog
 
+=== mill-vcs-version 0.1.4 - 2022-01-17
+
+* Added support for mill 0.10.x
+
 === mill-vcs-version 0.1.3 - 2022-01-14
+
+_For proper Mill 0.10 support, please use 0.1.4 or newer._
 
 * Added support for mill 0.10.0
 
