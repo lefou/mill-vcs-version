@@ -1,11 +1,6 @@
 on: [push, pull_request]
 
-env:
-  PUBLISH_OS: ubuntu-latest
-  PUBLISH_JAVA_VERSION: 8
-  PUBLISH_BRANCH: refs/heads/main
-
-jobs: 
+jobs:
   build:
     strategy:
       matrix:
@@ -47,13 +42,30 @@ jobs:
           file: ./out/*/scoverage/xmlReport/dest/scoverage.xml
         continue-on-error: true
 
+  publish:
+    if: github.repository == 'lefou/mill-vcs-version' && github.ref == refs/heads/main
+    runs-on: ubuntu-latest
+    concurrency: publish-{{ github.sha }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: git fetch --prune --tags --unshallow
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - run: ./millw -i __.publishLocal $(pwd)/testRepo
+        if: matrix.os != 'windows-latest'
+      - run: .\millw.bat -i __.publishLocal %GITHUB_WORKSPACE%/testRepo
+        if: matrix.os == 'windows-latest'
+        shell: cmd
+
       - name: Setup GPG secrets for publish
-        if: matrix.os == env.PUBLISH_OS && matrix.java-version == env.PUBLISH_JAVA_VERSION && github.ref == env.PUBLISH_BRANCH && github.event_name == 'push'
         run: |
           gpg --version
           cat <(echo "${{ secrets.GPG_SECRET_KEY }}") | base64 --decode | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
 
       - name: Publish to Maven Central
-        if: matrix.os == env.PUBLISH_OS && matrix.java-version == env.PUBLISH_JAVA_VERSION && github.ref == env.PUBLISH_BRANCH && github.event_name == 'push'
         run: ./millw -i mill.scalalib.PublishModule/publishAll --sonatypeCreds "${{ secrets.SONATYPE_CREDS }}" --gpgArgs "--passphrase=${{ secrets.GPG_SECRET_KEY_PASS}},--batch,--yes,-a,-b,--pinentry-mode,loopback" --publishArtifacts __.publishArtifacts --readTimeout 600000 --awaitTimeout 600000 --release true --signed true
