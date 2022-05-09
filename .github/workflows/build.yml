@@ -43,6 +43,7 @@ jobs:
         continue-on-error: true
 
   publish:
+    needs: build
     if: github.repository == 'lefou/mill-vcs-version' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     concurrency: publish-{{ github.sha }}
