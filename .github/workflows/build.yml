@@ -14,9 +14,10 @@ jobs:
       - uses: actions/checkout@v3
       - run: git fetch --prune --tags --unshallow
 
-      - uses: actions/setup-java@v1
+      - uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java-version }}
+          distribution: temurin
 
       - run: ./millw -i __.publishLocal $(pwd)/testRepo
         if: matrix.os != 'windows-latest'
@@ -52,9 +53,10 @@ jobs:
       - uses: actions/checkout@v3
       - run: git fetch --prune --tags --unshallow
 
-      - uses: actions/setup-java@v1
+      - uses: actions/setup-java@v3
         with:
           java-version: 8
+          distribution: temurin
 
       - run: ./millw -i __.publishLocal $(pwd)/testRepo
         if: matrix.os != 'windows-latest'
