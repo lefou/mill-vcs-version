@@ -1,5 +1,7 @@
 package de.tobiasroeser.mill.vcs.version
 
+import scala.util.Try
+
 case class VcsState(
     currentRevision: String,
     lastTag: Option[String],
@@ -15,7 +17,7 @@ case class VcsState(
       revHashDigits: Int = 6,
       dirtySep: String = "-DIRTY",
       dirtyHashDigits: Int = 8,
-      tagModifier: String => String = t => t
+      tagModifier: String => String = stripV
   ): String = {
     val versionPart = tagModifier(lastTag.getOrElse(noTagFallback))
 
@@ -36,6 +38,19 @@ case class VcsState(
 
     s"$versionPart$commitCountPart$revisionPart$dirtyPart"
   }
+
+  /**
+   * By default we strip the leading v if a user uses it.
+   * Ex. v2.3.2 -> 2.3.2
+   * @param tag the tag to process
+   * @return either the stripped tag or the tag verbatim
+   */
+  def stripV(tag: String): String =
+    tag match {
+      case t if t.startsWith("v") && Try(t.substring(1, 2).toInt).isSuccess =>
+        t.substring(1)
+      case t => t
+    }
 
 }
 

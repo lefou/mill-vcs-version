@@ -56,7 +56,7 @@ The `format` method has the following options:
 * `revHashDigits: Int = 6` - the number of digits to be used for the revision hash
 * `dirtySep: String = "-DIRTY"` - will be printed before the dirty hash if the local repository is in modified state
 * `dirtyHashDigits: Int = 8` - the number of digits to be used for the dirty hash
-* `tagModifier: String => String` - allows to modify the git tag, e.g. removing a prefix "v"
+* `tagModifier: String => String` - allows to modify the git tag (By default this strips a leading `v` if one exists. e.g. v1.2.3 -> 1.2.3)
 
 When used with its defaults, the outcome is identical to the version scheme used by mill.
 

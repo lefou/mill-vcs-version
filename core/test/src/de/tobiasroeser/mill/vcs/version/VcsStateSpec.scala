@@ -35,13 +35,20 @@ class VcsStateSpec extends AnyFreeSpec {
       }
     }
 
-    "should be able to remove a trailing `v` prefix from the tag" in {
+    "should strip the `v` prefix from the tag by default" in {
       assert(
-        state("v0.7.3", 4, "d23456789")
+        state("v0.7.3", 0).format() === "0.7.3"
+      )
+
+    }
+
+    "should be able to use a tag modifier to change the tag" in {
+      assert(
+        state("v0.7.3", 0, null)
           .format(tagModifier = {
-            case t if t.startsWith("v") && Try(t.substring(1,2).toInt).isSuccess => t.substring(1)
-            case t => t
-          } ) === "0.7.3-4-abcdef-DIRTYd2345678"
+            case t if t.startsWith("v") => t.substring(1) + "v"
+            case t                      => t
+          }) === "0.7.3v"
       )
 
     }
