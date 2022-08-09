@@ -1,5 +1,5 @@
 = mill-vcs-version - Derive a version from Version Control
-:version: 0.1.4
+:version: 0.2.0
 :mill-platform: 0.10
 :project-home: https://github.com/lefou/mill-vcs-version
 :toc:
@@ -106,6 +106,10 @@ Contributing::
 
 
 == Releases / Changelog
+
+=== mill-vcs-version 0.2.0 - 2022-08-09
+
+* Version tags starting with a `v`-prefix are now properly stripped by default.
 
 === mill-vcs-version 0.1.4 - 2022-01-17
 
