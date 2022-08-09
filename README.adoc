@@ -8,6 +8,7 @@
 ifdef::env-github[]
 image:https://github.com/lefou/mill-vcs-version/workflows/.github/workflows/build.yml/badge.svg["Build Status (GitHub Actions)", link="https://github.com/lefou/mill-vcs-version/actions"]
 image:https://codecov.io/gh/lefou/mill-vcs-version/branch/main/graph/badge.svg[Test Coverage (Codecov.io), link="https://codecov.io/gh/lefou/mill-vcs-version"]
+image:https://index.scala-lang.org/lefou/mill-vcs-version/de.tobiasroeser.mill.vcs.version_mill{mill-platform}/latest.svg["Latest version (Scaladex)", link="https://index.scala-lang.org/lefou/mill-vcs-version/de.tobiasroeser.mill.vcs.version_mill{mill-platform}"]
 endif::[]
 
 Mill plugin to derive a version from (last) git tag and edit state.
