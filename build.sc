@@ -23,7 +23,7 @@ trait Deps {
   val millMainApi = ivy"com.lihaoyi::mill-main-api:${millVersion}"
   val millScalalib = ivy"com.lihaoyi::mill-scalalib:${millVersion}"
   val millScalalibApi = ivy"com.lihaoyi::mill-scalalib-api:${millVersion}"
-  val scalaTest = ivy"org.scalatest::scalatest:3.2.10"
+  val scalaTest = ivy"org.scalatest::scalatest:3.2.13"
   val scoverageVersion = "1.4.11"
   val scoveragePlugin = ivy"org.scoverage:::scalac-scoverage-plugin:${scoverageVersion}"
   val scoverageRuntime = ivy"org.scoverage::scalac-scoverage-runtime:${scoverageVersion}"
@@ -40,7 +40,8 @@ object Deps_0_9 extends Deps {
   override def millPlatform = "0.9"
   override def millVersion = "0.9.3" // scala-steward:off
   override def scalaVersion = "2.13.8"
-  override def testWithMill = Seq("0.9.12", "0.9.11", "0.9.10", "0.9.9", "0.9.8", "0.9.7", "0.9.6", "0.9.5", "0.9.4", millVersion)
+  override def testWithMill =
+    Seq("0.9.12", "0.9.11", "0.9.10", "0.9.9", "0.9.8", "0.9.7", "0.9.6", "0.9.5", "0.9.4", millVersion)
 }
 object Deps_0_7 extends Deps {
   override def millPlatform = "0.7"
