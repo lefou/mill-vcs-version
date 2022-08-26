@@ -53,7 +53,7 @@ object Deps_0_7 extends Deps {
 object Deps_0_6 extends Deps {
   override def millPlatform = "0.6"
   override def millVersion = "0.6.0" // scala-steward:off
-  override def scalaVersion = "2.12.16"
+  override def scalaVersion = "2.12.15"
   override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", millVersion)
 }
 
