@@ -17,17 +17,21 @@ case class VcsState(
       revHashDigits: Int = 6,
       dirtySep: String = "-DIRTY",
       dirtyHashDigits: Int = 8,
-      tagModifier: String => String = stripV
+      tagModifier: String => String = stripV,
+      untaggedSuffix: String = ""
   ): String = {
     val versionPart = tagModifier(lastTag.getOrElse(noTagFallback))
 
-    val commitCountPart = if (lastTag.isEmpty || commitsSinceLastTag > 0) {
+    val isUntagged = lastTag.isEmpty || commitsSinceLastTag > 0
+
+    val commitCountPart = if (isUntagged) {
       s"$countSep${if (commitCountPad > 0) {
         (10000000000000L + commitsSinceLastTag).toString().substring(14 - commitCountPad, 14)
-      } else if (commitCountPad == 0) commitsSinceLastTag else ""}"
+      } else if (commitCountPad == 0) commitsSinceLastTag
+      else ""}"
     } else ""
 
-    val revisionPart = if (lastTag.isEmpty || commitsSinceLastTag > 0) {
+    val revisionPart = if (isUntagged) {
       s"$revSep${currentRevision.take(revHashDigits)}"
     } else ""
 
@@ -36,7 +40,9 @@ case class VcsState(
       case Some(d) => dirtySep + d.take(dirtyHashDigits)
     }
 
-    s"$versionPart$commitCountPart$revisionPart$dirtyPart"
+    val snapshotSuffix = if (isUntagged) untaggedSuffix else ""
+
+    s"$versionPart$commitCountPart$revisionPart$dirtyPart$snapshotSuffix"
   }
 
   /**
@@ -51,6 +57,28 @@ case class VcsState(
         t.substring(1)
       case t => t
     }
+
+  @deprecated("Binary compatibility shim. Use other overload instead.", "mill-vcs-verison after 0.2.0")
+  private[version] def format(
+      noTagFallback: String,
+      countSep: String,
+      commitCountPad: Byte,
+      revSep: String,
+      revHashDigits: Int,
+      dirtySep: String,
+      dirtyHashDigits: Int,
+      tagModifier: String => String
+  ): String = format(
+    noTagFallback = noTagFallback,
+    countSep = countSep,
+    commitCountPad = commitCountPad,
+    revSep = revSep,
+    revHashDigits = revHashDigits,
+    dirtySep = dirtySep,
+    dirtyHashDigits = dirtyHashDigits,
+    tagModifier = tagModifier,
+    untaggedSuffix = ""
+  )
 
 }
 
