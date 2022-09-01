@@ -19,11 +19,14 @@ jobs:
           java-version: ${{ matrix.java-version }}
           distribution: temurin
 
-      - run: ./millw -i __.publishLocal $(pwd)/testRepo
+      - run: ./millw -i __.publishLocal testRepo
         if: matrix.os != 'windows-latest'
-      - run: .\millw.bat -i __.publishLocal %GITHUB_WORKSPACE%/testRepo
+      - run: .\millw.bat -i __.publishLocal testRepo
         if: matrix.os == 'windows-latest'
         shell: cmd
+
+      - run: ./millw -i __.mimaReportBinaryIssues
+        if: matrix.os != 'windows-latest' 
 
       - run: ./millw -i -k __.testCached
         if: matrix.os != 'windows-latest'

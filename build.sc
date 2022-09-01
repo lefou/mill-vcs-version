@@ -2,6 +2,9 @@
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.1.4`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.6.0`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
+import $ivy.`com.github.lolgab::mill-mima::0.0.12`
+
+// imports
 import mill._
 import mill.contrib.scoverage.ScoverageModule
 import mill.define.{Command, Target, Task, TaskModule}
@@ -9,6 +12,7 @@ import mill.scalalib._
 import mill.scalalib.publish._
 import de.tobiasroeser.mill.integrationtest._
 import de.tobiasroeser.mill.vcs.version._
+import com.github.lolgab.mill.mima.Mima
 import os.Path
 
 val baseDir = build.millSourcePath
@@ -18,6 +22,8 @@ trait Deps {
   def millVersion: String
   def scalaVersion: String
   def testWithMill: Seq[String]
+
+  def mimaPreviousVersions = Seq("0.1.0", "0.1.1", "0.1.2", "0.1.3", "0.1.4", "0.2.0")
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
   val millMainApi = ivy"com.lihaoyi::mill-main-api:${millVersion}"
@@ -36,6 +42,8 @@ object Deps_0_10_0 extends Deps {
   override def scalaVersion = "2.13.8"
   // 0.10.4 and 0.10.3 don't run in CI on Windows
   override def testWithMill = Seq("0.10.5", millVersion)
+
+  override def mimaPreviousVersions = super.mimaPreviousVersions.reverse.takeWhile(_ != "0.1.3").reverse
 }
 object Deps_0_9 extends Deps {
   override def millPlatform = "0.9"
@@ -100,7 +108,7 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
 
 /* The actual mill plugin compilied against different mill APIs. */
 object core extends Cross[CoreCross](millApiVersions.map(_._1): _*)
-class CoreCross(override val millApiVersion: String) extends BaseModule {
+class CoreCross(override val millApiVersion: String) extends BaseModule with Mima {
 
   override def artifactName = "de.tobiasroeser.mill.vcs.version"
 
@@ -114,6 +122,8 @@ class CoreCross(override val millApiVersion: String) extends BaseModule {
   object test extends Tests with TestModule.ScalaTest {
     override def ivyDeps = Agg(deps.scalaTest)
   }
+
+  def mimaPreviousVersions = deps.mimaPreviousVersions
 }
 
 /** Integration tests. */
