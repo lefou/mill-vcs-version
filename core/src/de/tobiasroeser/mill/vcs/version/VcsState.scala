@@ -18,7 +18,7 @@ case class VcsState(
       dirtySep: String = "-DIRTY",
       dirtyHashDigits: Int = 8,
       tagModifier: String => String = stripV,
-      appendSnapshot: String = ""
+      untaggedSuffix: String = ""
   ): String = {
     val versionPart = tagModifier(lastTag.getOrElse(noTagFallback))
 
@@ -27,7 +27,8 @@ case class VcsState(
     val commitCountPart = if (isUntagged) {
       s"$countSep${if (commitCountPad > 0) {
         (10000000000000L + commitsSinceLastTag).toString().substring(14 - commitCountPad, 14)
-      } else if (commitCountPad == 0) commitsSinceLastTag else ""}"
+      } else if (commitCountPad == 0) commitsSinceLastTag
+      else ""}"
     } else ""
 
     val revisionPart = if (isUntagged) {
@@ -39,7 +40,7 @@ case class VcsState(
       case Some(d) => dirtySep + d.take(dirtyHashDigits)
     }
 
-    val snapshotSuffix = if (isUntagged) appendSnapshot else ""
+    val snapshotSuffix = if (isUntagged) untaggedSuffix else ""
 
     s"$versionPart$commitCountPart$revisionPart$dirtyPart$snapshotSuffix"
   }
@@ -76,7 +77,7 @@ case class VcsState(
     dirtySep = dirtySep,
     dirtyHashDigits = dirtyHashDigits,
     tagModifier = tagModifier,
-    appendSnapshot = ""
+    untaggedSuffix = ""
   )
 
 }

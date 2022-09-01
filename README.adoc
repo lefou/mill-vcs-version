@@ -58,9 +58,9 @@ The `format` method has the following options:
 * `dirtySep: String = "-DIRTY"` - will be printed before the dirty hash if the local repository is in modified state
 * `dirtyHashDigits: Int = 8` - the number of digits to be used for the dirty hash
 * `tagModifier: String => String` - allows to modify the git tag (By default this strips a leading `v` if one exists. e.g. v1.2.3 -> 1.2.3)
-* `appendSnapshot: String = "" - will append the given string at the end of the version when the current revision is not tagged (e.g. use with `"-SNAPSHOT"` to publish to Maven Snapshot repositories)
+* `untaggedSuffix: String = "" - will append the given string at the end of the version when the current revision is not tagged (e.g. use with `"-SNAPSHOT"` to publish to Maven Snapshot repositories)
 
-When used with its defaults, the outcome is identical to the version scheme used by mill.
+When used with its defaults, the outcome is identical to the version scheme used by Mill.
 
 == Download
 
