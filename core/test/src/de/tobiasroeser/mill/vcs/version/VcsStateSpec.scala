@@ -74,6 +74,12 @@ class VcsStateSpec extends AnyFreeSpec {
             .format(dirtyHashDigits = 0, commitCountPad = 4, countSep = ".") === "5.3.7.0030-618c86"
         )
       }
+      "Maven SNAPSHOT" in {
+        assert(
+          state("5.3.7", 30, "d23456789", "618c86095ce483feea2e331cc4e28e6466d634f7")
+            .format(dirtyHashDigits = 0, commitCountPad = -1, countSep = "-SNAPSHOT", dirtySep = "", revHashDigits = 0, revSep = "") === "5.3.7-SNAPSHOT"
+        )
+      }
     }
 
   }
