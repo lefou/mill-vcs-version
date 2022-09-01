@@ -24,7 +24,7 @@ case class VcsState(
     val commitCountPart = if (lastTag.isEmpty || commitsSinceLastTag > 0) {
       s"$countSep${if (commitCountPad > 0) {
         (10000000000000L + commitsSinceLastTag).toString().substring(14 - commitCountPad, 14)
-      } else commitsSinceLastTag}"
+      } else if (commitCountPad == 0) commitsSinceLastTag else ""}"
     } else ""
 
     val revisionPart = if (lastTag.isEmpty || commitsSinceLastTag > 0) {

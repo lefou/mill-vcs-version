@@ -50,7 +50,17 @@ class VcsStateSpec extends AnyFreeSpec {
             case t                      => t
           }) === "0.7.3v"
       )
+    }
 
+    "should not render the commit count when commitCountPad is negative" in {
+      assert(
+        state("0.7.3", 4, "a6ea44d3726", "61568ec80f2465f3f01ea2c7e92273f4fbf94b01")
+          .format(dirtyHashDigits = 8, commitCountPad = -1, countSep = "") === "0.7.3-61568e-DIRTYa6ea44d3"
+      )
+      assert(
+        state("0.7.3", 4, null, "61568ec80f2465f3f01ea2c7e92273f4fbf94b01")
+          .format(dirtyHashDigits = 8, commitCountPad = -1, countSep = "") === "0.7.3-61568e"
+      )
     }
 
     "Example format configs" - {
