@@ -52,7 +52,7 @@ The `format` method has the following options:
 
 * `noTagFallback: String = "0.0.0"` - will be used when no tag was found
 * `countSep: String = "-"` - will be printed before the commit count when it is greater than zero
-* `commitCountPad: Byte = 0` - if greater that zero, the commit count will be padded to the given length
+* `commitCountPad: Byte = 0` - if greater than zero, the commit count will be padded to the given length; a negative value results in never adding the commit count
 * `revSep: String = "-"` - will be printed before the revision hash if it is not a tagged revision
 * `revHashDigits: Int = 6` - the number of digits to be used for the revision hash
 * `dirtySep: String = "-DIRTY"` - will be printed before the dirty hash if the local repository is in modified state
