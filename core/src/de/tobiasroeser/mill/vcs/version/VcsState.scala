@@ -57,6 +57,28 @@ case class VcsState(
       case t => t
     }
 
+  @deprecated("Binary compatibility shim. Use other overload instead.", "mill-vcs-verison after 0.2.0")
+  private[version] def format(
+      noTagFallback: String,
+      countSep: String,
+      commitCountPad: Byte,
+      revSep: String,
+      revHashDigits: Int,
+      dirtySep: String,
+      dirtyHashDigits: Int,
+      tagModifier: String => String
+  ): String = format(
+    noTagFallback = noTagFallback,
+    countSep = countSep,
+    commitCountPad = commitCountPad,
+    revSep = revSep,
+    revHashDigits = revHashDigits,
+    dirtySep = dirtySep,
+    dirtyHashDigits = dirtyHashDigits,
+    tagModifier = tagModifier,
+    appendSnapshot = ""
+  )
+
 }
 
 object VcsState {
