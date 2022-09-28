@@ -1,5 +1,5 @@
 = mill-vcs-version - Derive a version from Version Control
-:version: 0.2.0
+:version: 0.3.0
 :mill-platform: 0.10
 :project-home: https://github.com/lefou/mill-vcs-version
 :toc:
@@ -108,6 +108,14 @@ Contributing::
 
 
 == Releases / Changelog
+
+=== mill-vcs-version 0.3.0 - 2022-09-28
+
+* Support omitting the commit count
+* Don't fail for projects not under version control
+* Added `VcsState.vcs` field to check for the current used version control system, if any
+* Commit to `EarlySemVer` version scheme
+* Updated dependencies and tools
 
 === mill-vcs-version 0.2.0 - 2022-08-09
 
