@@ -29,7 +29,6 @@ trait VcsVersion extends Module {
 
     curHeadRaw match {
       case None =>
-        (None, None)
         VcsState("no-vcs", None, 0, None, None)
 
       case curHead =>
@@ -92,7 +91,6 @@ trait VcsVersion extends Module {
           case s  => Some(Integer.toHexString(s.hashCode))
         }
 
-//        Result.Success(
         new VcsState(
           currentRevision = curHead.getOrElse(""),
           lastTag = lastTag,
@@ -100,7 +98,6 @@ trait VcsVersion extends Module {
           dirtyHash = dirtyHashCode,
           vcs = Option(Vcs.git)
         )
-//        )
     }
   }
 
