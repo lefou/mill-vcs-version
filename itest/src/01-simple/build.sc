@@ -27,11 +27,25 @@ def initVcs: T[Unit] =
     ()
   }
 
-def verify(): Command[Unit] =
+def verify1(): Command[Unit] =
   T.command {
     initVcs()
     val version = VcsVersion.vcsState().format()
     T.log.info(s"version=${version}")
-    assert(version.startsWith("1.2.3-1-"))
+    assert(version.startsWith("1.2.3-1-") && !version.contains("DIRTY"))
+    ()
+  }
+
+def changeSomething(): Command[Unit] = T.command {
+  os.write.append(baseDir / "plugins.sc", "\n// dummy text")
+  ()
+}
+
+def verify2(): Command[Unit] =
+  T.command {
+    initVcs()
+    val version = VcsVersion.vcsState().format()
+    T.log.info(s"version=${version}")
+    assert(version.startsWith("1.2.3-1-") && version.contains("DIRTY"), s"Version was: ${version}")
     ()
   }

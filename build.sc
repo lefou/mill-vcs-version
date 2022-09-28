@@ -155,8 +155,10 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
     super.testInvocations().map {
       case (pr, _) if pr.path.last == "01-simple" =>
         pr -> Seq(
-          TestInvocation.Targets(Seq("-d", "verify")),
-          TestInvocation.Targets(Seq("de.tobiasroeser.mill.vcs.version.VcsVersion/vcsState"))
+          TestInvocation.Targets(Seq("-d", "verify1")),
+          TestInvocation.Targets(Seq("de.tobiasroeser.mill.vcs.version.VcsVersion/vcsState")),
+          TestInvocation.Targets(Seq("changeSomething")),
+          TestInvocation.Targets(Seq("verify2"))
         )
       case (pr, _) => pr -> Seq(TestInvocation.Targets(Seq("-d", "verify")))
     }
