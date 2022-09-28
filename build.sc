@@ -23,7 +23,7 @@ trait Deps {
   def scalaVersion: String
   def testWithMill: Seq[String]
 
-  def mimaPreviousVersions = Seq("0.1.0", "0.1.1", "0.1.2", "0.1.3", "0.1.4", "0.2.0")
+  def mimaPreviousVersions: Seq[String] = Seq()
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
   val millMainApi = ivy"com.lihaoyi::mill-main-api:${millVersion}"
@@ -83,6 +83,12 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
   def publishVersion = VcsVersion.vcsState().format()
 
   override def mimaPreviousVersions = deps.mimaPreviousVersions
+  override def mimaPreviousArtifacts: Target[Agg[Dep]] = T {
+    val md = artifactMetadata()
+    Agg.from(
+      mimaPreviousVersions().map(v => ivy"${md.group}:${md.id}:${v}")
+    )
+  }
 
   override def javacOptions = Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8")
   override def scalacOptions = Seq("-target:jvm-1.8", "-encoding", "UTF-8")
