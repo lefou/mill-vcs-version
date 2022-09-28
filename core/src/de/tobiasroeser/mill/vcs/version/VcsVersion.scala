@@ -2,8 +2,8 @@ package de.tobiasroeser.mill.vcs.version
 
 import scala.util.control.NonFatal
 import mill.T
-import mill.define.{Discover, ExternalModule, Module, Task}
-import mill.api.Result
+import mill.define.{Discover, ExternalModule, Input, Module, Task}
+import mill.api.{Logger, Result}
 import os.{CommandResult, SubprocessException}
 
 trait VcsVersion extends Module {
@@ -15,15 +15,15 @@ trait VcsVersion extends Module {
    *
    * @return A tuple of (the latest tag, the calculated version string)
    */
-  def vcsState: T[VcsState] = T.input { calcVcsState()() }
+  def vcsState: Input[VcsState] = T.input { calcVcsState(T.log) }
 
-  private[this] def calcVcsState(): Task[VcsState] = T.task {
+  private[this] def calcVcsState(logger: Logger): VcsState = {
     val curHeadRaw =
       try {
         Option(os.proc("git", "rev-parse", "HEAD").call(cwd = vcsBasePath).out.trim)
       } catch {
         case e: SubprocessException =>
-          T.log.error(s"${vcsBasePath} is not a git repository.")
+          logger.error(s"${vcsBasePath} is not a git repository.")
           None
       }
 
