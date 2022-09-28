@@ -37,7 +37,7 @@ def verify1(): Command[Unit] =
   }
 
 def changeSomething(): Command[Unit] = T.command {
-  os.write.append(T.workspace / "plugins.sc", "\n// dummy text")
+  os.write.append(baseDir / "plugins.sc", "\n// dummy text")
   ()
 }
 
