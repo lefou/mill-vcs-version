@@ -81,6 +81,7 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
   }
 
   def publishVersion = VcsVersion.vcsState().format()
+  override def versionScheme: T[Option[VersionScheme]] = T(Option(VersionScheme.EarlySemVer))
 
   override def mimaPreviousVersions = deps.mimaPreviousVersions
   override def mimaPreviousArtifacts: Target[Agg[Dep]] = T {
