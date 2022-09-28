@@ -12,11 +12,11 @@ val baseDir = build.millSourcePath
 def verify(): Command[Unit] =
   T.command {
     val vcState = VcsVersion.vcsState()
+    T.log.errorStream.println(s"vcsState: ${vcState}")
+    assert(vcState.vcs == None)
 
-    // TODO currently, we can't control ENV vars in mill-integrationtest
-    // but without setting GIT_DIR, git will automatically detect the outer git repo
-//    val version = vcState.format()
-//    assert(version.startsWith("0.0.0"), s"""Expected: starts with "0.0.0", actual: "$version"""")
-
+    val version = vcState.format()
+    T.log.errorStream.println(s"version: ${version}")
+    assert(version == "0.0.0-0-no-vcs", s"""Expected: "0.0.0-0-no-vcs", actual: "$version"""")
     ()
   }

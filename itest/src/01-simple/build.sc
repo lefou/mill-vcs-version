@@ -30,7 +30,10 @@ def initVcs: T[Unit] =
 def verify(): Command[Unit] =
   T.command {
     initVcs()
-    val version = VcsVersion.vcsState().format()
+    val vcsState = VcsVersion.vcsState()
+    assert(vcsState.vcs == Some(Vcs.git))
+
+    val version = vcsState.format()
     T.log.info(s"version=${version}")
     assert(version.startsWith("1.2.3-1-"))
     ()
