@@ -10,8 +10,9 @@ class VcsStateSpec extends AnyFreeSpec {
       lastTag: String,
       commitsSinceLastTag: Int,
       dirtyHash: String = null,
-      currentRevision: String = "abcdefghijklmnopqrstuvwxyz"
-  ): VcsState = VcsState(currentRevision, Option(lastTag), commitsSinceLastTag, Option(dirtyHash))
+      currentRevision: String = "abcdefghijklmnopqrstuvwxyz",
+      vcs: String = "git"
+  ): VcsState = VcsState(currentRevision, Option(lastTag), commitsSinceLastTag, Option(dirtyHash), vcs = Option(Vcs(vcs)))
 
   "VcsState.format" - {
     "With default format options" - {
@@ -75,6 +76,12 @@ class VcsStateSpec extends AnyFreeSpec {
       assert(
         state("0.7.3", 4, null, "61568ec80f2465f3f01ea2c7e92273f4fbf94b01")
           .format(untaggedSuffix = "-SNAPSHOT") === "0.7.3-4-61568e-SNAPSHOT"
+      )
+    }
+
+    "should format with fallback tag when no vcs" in {
+      assert(
+        state(null, 0, null, "no-vcs", null).format() === "0.0.0-0-no-vcs"
       )
     }
 

@@ -1,10 +1,9 @@
 package de.tobiasroeser.mill.vcs.version
 
 import scala.util.control.NonFatal
-
 import mill.T
-import mill.define.{Discover, ExternalModule, Module}
-import mill.api.Result
+import mill.define.{Discover, ExternalModule, Input, Module, Task}
+import mill.api.{Logger, Result}
 import os.{CommandResult, SubprocessException}
 
 trait VcsVersion extends Module {
@@ -16,69 +15,90 @@ trait VcsVersion extends Module {
    *
    * @return A tuple of (the latest tag, the calculated version string)
    */
-  def vcsState: T[VcsState] = T.input { calcVcsState() }
+  def vcsState: Input[VcsState] = T.input { calcVcsState(T.log) }
 
-  private[this] def calcVcsState(): Result[VcsState] = {
-    val curHead = try {
-      os.proc('git, "rev-parse", "HEAD").call(cwd = vcsBasePath).out.trim
-    } catch {
-      case e: SubprocessException =>
-        return Result.Failure(s"${vcsBasePath} is not a git repository.")
-    }
-
-    val exactTag =
+  private[this] def calcVcsState(logger: Logger): VcsState = {
+    val curHeadRaw =
       try {
-        Option(
-          os.proc("git", "describe", "--exact-match", "--tags", "--always", curHead)
-            .call(cwd = vcsBasePath)
-            .out.text().trim
-        ).filter(_.nonEmpty)
+        Option(os.proc("git", "rev-parse", "HEAD").call(cwd = vcsBasePath).out.trim)
       } catch {
-        case NonFatal(_) => None
+        case e: SubprocessException =>
+          logger.error(s"${vcsBasePath} is not a git repository.")
+          None
       }
 
-    val lastTag: Option[String] = exactTag.orElse {
-      try {
-        Option(
-          os
-            .proc("git", "describe", "--abbrev=0", "--tags")
-            .call()
-            .out.text().trim
-        ).filter(_.nonEmpty)
-      } catch {
-        case NonFatal(_) => None
-      }
+    curHeadRaw match {
+      case None =>
+        VcsState("no-vcs", None, 0, None, None)
+
+      case curHead =>
+        // we have a proper git repo
+
+        val exactTag =
+          try {
+            curHead
+              .map(curHead =>
+                os.proc("git", "describe", "--exact-match", "--tags", "--always", curHead)
+                  .call(cwd = vcsBasePath)
+                  .out
+                  .text()
+                  .trim
+              )
+              .filter(_.nonEmpty)
+          } catch {
+            case NonFatal(_) => None
+          }
+
+        val lastTag: Option[String] = exactTag.orElse {
+          try {
+            Option(
+              os.proc("git", "describe", "--abbrev=0", "--tags")
+                .call()
+                .out
+                .text()
+                .trim()
+            )
+              .filter(_.nonEmpty)
+          } catch {
+            case NonFatal(_) => None
+          }
+        }
+
+        val commitsSinceLastTag =
+          if (exactTag.isDefined) 0
+          else {
+            curHead
+              .map { curHead =>
+                os.proc(
+                  "git",
+                  "rev-list",
+                  curHead,
+                  lastTag match {
+                    case Some(tag) => Seq("--not", tag)
+                    case _         => Seq()
+                  },
+                  "--count"
+                ).call()
+                  .out
+                  .trim
+                  .toInt
+              }
+              .getOrElse(0)
+          }
+
+        val dirtyHashCode: Option[String] = Option(os.proc("git", "diff").call().out.text().trim()).flatMap {
+          case "" => None
+          case s  => Some(Integer.toHexString(s.hashCode))
+        }
+
+        new VcsState(
+          currentRevision = curHead.getOrElse(""),
+          lastTag = lastTag,
+          commitsSinceLastTag = commitsSinceLastTag,
+          dirtyHash = dirtyHashCode,
+          vcs = Option(Vcs.git)
+        )
     }
-
-    val commitsSinceLastTag =
-      if (exactTag.isDefined) 0
-      else {
-        os.proc(
-          'git,
-          "rev-list",
-          curHead,
-          lastTag match {
-            case Some(tag) => Seq("--not", tag)
-            case _         => Seq()
-          },
-          "--count"
-        ).call()
-          .out
-          .trim
-          .toInt
-      }
-
-    val dirtyHashCode: Option[String] = os.proc('git, 'diff).call().out.text.trim() match {
-      case "" => None
-      case s  => Some(Integer.toHexString(s.hashCode))
-    }
-
-    Result.Success(new VcsState(
-      currentRevision = curHead,
-      lastTag = lastTag,
-      commitsSinceLastTag = commitsSinceLastTag,
-      dirtyHash = dirtyHashCode
-    ))
   }
 
 }

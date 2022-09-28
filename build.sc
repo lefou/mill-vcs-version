@@ -23,7 +23,7 @@ trait Deps {
   def scalaVersion: String
   def testWithMill: Seq[String]
 
-  def mimaPreviousVersions = Seq("0.1.0", "0.1.1", "0.1.2", "0.1.3", "0.1.4", "0.2.0")
+  def mimaPreviousVersions: Seq[String] = Seq()
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
   val millMainApi = ivy"com.lihaoyi::mill-main-api:${millVersion}"
@@ -70,7 +70,7 @@ val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
 val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 
 /** Shared configuration. */
-trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModule {
+trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModule with Mima {
   def millApiVersion: String
   def deps: Deps = millApiVersions.toMap.apply(millApiVersion)
   def crossScalaVersion = deps.scalaVersion
@@ -81,6 +81,15 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
   }
 
   def publishVersion = VcsVersion.vcsState().format()
+  override def versionScheme: T[Option[VersionScheme]] = T(Option(VersionScheme.EarlySemVer))
+
+  override def mimaPreviousVersions = deps.mimaPreviousVersions
+  override def mimaPreviousArtifacts: Target[Agg[Dep]] = T {
+    val md = artifactMetadata()
+    Agg.from(
+      mimaPreviousVersions().map(v => ivy"${md.group}:${md.id}:${v}")
+    )
+  }
 
   override def javacOptions = Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8")
   override def scalacOptions = Seq("-target:jvm-1.8", "-encoding", "UTF-8")
@@ -97,33 +106,23 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
   }
 
   override def scoverageVersion = deps.scoverageVersion
-  // we need to adapt to changed publishing policy - patch-level
-  override def scoveragePluginDep = T {
-    deps.scoveragePlugin
-  }
 
   trait Tests extends ScoverageTests
-
 }
 
 /* The actual mill plugin compilied against different mill APIs. */
 object core extends Cross[CoreCross](millApiVersions.map(_._1): _*)
-class CoreCross(override val millApiVersion: String) extends BaseModule with Mima {
+class CoreCross(override val millApiVersion: String) extends BaseModule {
 
   override def artifactName = "de.tobiasroeser.mill.vcs.version"
 
   override def skipIdea: Boolean = deps != crossDeps.head
 
-  override def compileIvyDeps = Agg(
-    deps.millMain,
-    deps.millScalalib
-  )
+  override def compileIvyDeps = Agg(deps.millMain)
 
   object test extends Tests with TestModule.ScalaTest {
-    override def ivyDeps = Agg(deps.scalaTest)
+    override def ivyDeps = Agg(deps.scalaTest, deps.millMain)
   }
-
-  def mimaPreviousVersions = deps.mimaPreviousVersions
 }
 
 /** Integration tests. */
@@ -152,15 +151,23 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
     }
 
   override def testInvocations: Target[Seq[(PathRef, Seq[TestInvocation.Targets])]] = T {
-    super.testInvocations().map {
-      case (pr, _) if pr.path.last == "01-simple" =>
-        pr -> Seq(
-          TestInvocation.Targets(Seq("-d", "verify1")),
-          TestInvocation.Targets(Seq("de.tobiasroeser.mill.vcs.version.VcsVersion/vcsState")),
-          TestInvocation.Targets(Seq("changeSomething")),
-          TestInvocation.Targets(Seq("verify2"))
-        )
-      case (pr, _) => pr -> Seq(TestInvocation.Targets(Seq("-d", "verify")))
+    testCases().map { pathref =>
+      pathref.path.last match {
+        case "01-simple" =>
+          pathref -> Seq(
+            TestInvocation.Targets(Seq("-d", "verify1")),
+            TestInvocation.Targets(Seq("de.tobiasroeser.mill.vcs.version.VcsVersion/vcsState")),
+            TestInvocation.Targets(Seq("changeSomething")),
+            TestInvocation.Targets(Seq("verify2"))
+          )
+        case "no-git" =>
+          pathref -> Seq(
+            // setting GIT_DIR explicitly disables repository discovery
+            TestInvocation.Targets(targets = Seq("-d", "verify"), env = Map("GIT_DIR" -> "."))
+          )
+        case _ =>
+          pathref -> Seq(TestInvocation.Targets(Seq("-d", "verify")))
+      }
     }
   }
 

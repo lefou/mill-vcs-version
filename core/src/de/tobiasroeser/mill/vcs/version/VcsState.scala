@@ -6,7 +6,8 @@ case class VcsState(
     currentRevision: String,
     lastTag: Option[String],
     commitsSinceLastTag: Int,
-    dirtyHash: Option[String]
+    dirtyHash: Option[String],
+    vcs: Option[Vcs]
 ) {
 
   def format(
@@ -58,7 +59,7 @@ case class VcsState(
       case t => t
     }
 
-  @deprecated("Binary compatibility shim. Use other overload instead.", "mill-vcs-verison after 0.2.0")
+  @deprecated("Binary compatibility shim. Use other overload instead.", "mill-vcs-version after 0.2.0")
   private[version] def format(
       noTagFallback: String,
       countSep: String,
@@ -79,9 +80,8 @@ case class VcsState(
     tagModifier = tagModifier,
     untaggedSuffix = ""
   )
-
 }
 
 object VcsState {
-  implicit def jsonify: upickle.default.ReadWriter[VcsState] = upickle.default.macroRW
+  implicit val jsonify: upickle.default.ReadWriter[VcsState] = upickle.default.macroRW
 }
