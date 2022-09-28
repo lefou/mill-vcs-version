@@ -155,8 +155,10 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
       pathref.path.last match {
         case "01-simple" =>
           pathref -> Seq(
-            TestInvocation.Targets(Seq("-d", "verify")),
-            TestInvocation.Targets(Seq("de.tobiasroeser.mill.vcs.version.VcsVersion/vcsState"))
+            TestInvocation.Targets(Seq("-d", "verify1")),
+            TestInvocation.Targets(Seq("de.tobiasroeser.mill.vcs.version.VcsVersion/vcsState")),
+            TestInvocation.Targets(Seq("changeSomething")),
+            TestInvocation.Targets(Seq("verify2"))
           )
         case "no-git" =>
           pathref -> Seq(
