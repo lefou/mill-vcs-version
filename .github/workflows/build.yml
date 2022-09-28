@@ -26,9 +26,6 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: cmd
 
-      - run: ./millw -i __.mimaReportBinaryIssues
-        if: matrix.os != 'windows-latest' 
-
       - run: ./millw -i -k __.testCached
         if: matrix.os != 'windows-latest'
       - run: ./millw.bat -i -k __.testCached
@@ -47,8 +44,21 @@ jobs:
           files: ./out/core/0.10/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.9/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.7/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.6/scoverage/xmlReport.dest/scoverage.xml
         continue-on-error: true
 
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: temurin
+
+      - run: ./millw -i __.mimaReportBinaryIssues
+
   publish:
-    needs: build
+    needs: [build, checks]
     if: github.repository == 'lefou/mill-vcs-version' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     concurrency: publish-{{ github.sha }}
