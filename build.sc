@@ -2,7 +2,7 @@
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.2.0`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.6.1`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
-import $ivy.`com.github.lolgab::mill-mima::0.0.12`
+import $ivy.`com.github.lolgab::mill-mima::0.0.13`
 
 // imports
 import mill._
@@ -23,17 +23,12 @@ trait Deps {
   def scalaVersion: String
   def testWithMill: Seq[String]
 
-  def mimaPreviousVersions: Seq[String] = Seq()
+  def mimaPreviousVersions: Seq[String] = Seq("0.3.0")
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
-  val millMainApi = ivy"com.lihaoyi::mill-main-api:${millVersion}"
-  val millScalalib = ivy"com.lihaoyi::mill-scalalib:${millVersion}"
-  val millScalalibApi = ivy"com.lihaoyi::mill-scalalib-api:${millVersion}"
   val scalaTest = ivy"org.scalatest::scalatest:3.2.13"
   val scoverageVersion = "2.0.3"
-  val scoveragePlugin = ivy"org.scoverage:::scalac-scoverage-plugin:${scoverageVersion}"
   val scoverageRuntime = ivy"org.scoverage::scalac-scoverage-runtime:${scoverageVersion}"
-  val slf4j = ivy"org.slf4j:slf4j-api:1.7.25"
 }
 
 object Deps_0_10_0 extends Deps {
