@@ -1,5 +1,5 @@
 // mill plugins
-import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.2.0`
+import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.3.0`
 import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.6.1`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:$MILL_VERSION`
 import $ivy.`com.github.lolgab::mill-mima::0.0.13`
@@ -27,7 +27,7 @@ trait Deps {
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
   val scalaTest = ivy"org.scalatest::scalatest:3.2.14"
-  val scoverageVersion = "2.0.3"
+  val scoverageVersion = "2.0.7"
   val scoverageRuntime = ivy"org.scoverage::scalac-scoverage-runtime:${scoverageVersion}"
 }
 
@@ -56,7 +56,7 @@ object Deps_0_7 extends Deps {
 object Deps_0_6 extends Deps {
   override def millPlatform = "0.6"
   override def millVersion = "0.6.0" // scala-steward:off
-  override def scalaVersion = "2.12.16"
+  override def scalaVersion = "2.12.17"
   override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", millVersion)
 }
 
