@@ -31,14 +31,19 @@ trait Deps {
   val scoverageRuntime = ivy"org.scoverage::scalac-scoverage-runtime:${scoverageVersion}"
 }
 
-object Deps_0_10_0 extends Deps {
+object Deps_0_11 extends Deps {
+  override def millPlatform = "0.11.0-M1"
+  override def millVersion = "0.11.0-M1" // scala-steward:off
+  override def scalaVersion = "2.13.10"
+  override def testWithMill = Seq(millVersion)
+  override def mimaPreviousVersions = super.mimaPreviousVersions.reverse.takeWhile(_ != "0.3.0").reverse
+}
+object Deps_0_10 extends Deps {
   override def millPlatform = "0.10"
   override def millVersion = "0.10.0" // scala-steward:off
   override def scalaVersion = "2.13.10"
   // 0.10.4 and 0.10.3 don't run in CI on Windows
   override def testWithMill = Seq("0.10.5", millVersion)
-
-  override def mimaPreviousVersions = super.mimaPreviousVersions.reverse.takeWhile(_ != "0.1.3").reverse
 }
 object Deps_0_9 extends Deps {
   override def millPlatform = "0.9"
@@ -60,7 +65,7 @@ object Deps_0_6 extends Deps {
   override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", millVersion)
 }
 
-val crossDeps = Seq(Deps_0_10_0, Deps_0_9, Deps_0_7, Deps_0_6)
+val crossDeps = Seq(Deps_0_11, Deps_0_10, Deps_0_9, Deps_0_7, Deps_0_6)
 val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
 val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 
