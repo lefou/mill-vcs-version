@@ -41,7 +41,7 @@ jobs:
       - name: Upload scoverage reports to codecov.io
         uses: codecov/codecov-action@v3
         with:
-          files: ./out/core/0.11/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.10/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.9/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.7/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.6/scoverage/xmlReport.dest/scoverage.xml
+          files: ./out/core/0.11.0-M5/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.10/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.9/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.7/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.6/scoverage/xmlReport.dest/scoverage.xml
         continue-on-error: true
 
   checks:
