@@ -7,7 +7,7 @@ import de.tobiasroeser.mill.vcs.version._
 import mill._
 import mill.define.Command
 
-val baseDir = build.millSourcePath
+def baseDir = build.millSourcePath
 
 def initVcs: T[Unit] =
   T {
