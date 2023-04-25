@@ -99,8 +99,8 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
         .map(p => PathRef(millSourcePath / s"src-${p}"))
   }
 
-  override def javacOptions = Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8")
-  override def scalacOptions = Seq("-target:jvm-1.8", "-encoding", "UTF-8")
+  override def javacOptions = Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8", "-deprecation")
+  override def scalacOptions = Seq("-target:jvm-1.8", "-encoding", "UTF-8", "-deprecation")
 
   def pomSettings = T {
     PomSettings(
