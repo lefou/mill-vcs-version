@@ -137,7 +137,7 @@ class CoreCross(override val millApiVersion: String) extends BaseModule {
 object itest extends Cross[ItestCross](millItestVersions.map(_._1): _*) with TaskModule {
   override def defaultCommandName(): String = "test"
   def testCached: T[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).testCached
-  def test(args: String*): Command[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).test()
+  def test(args: String*): Command[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).test(args: _*)
 }
 class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
 
