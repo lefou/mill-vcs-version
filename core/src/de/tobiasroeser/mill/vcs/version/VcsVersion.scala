@@ -1,10 +1,11 @@
 package de.tobiasroeser.mill.vcs.version
 
-import scala.util.control.NonFatal
 import mill.T
-import mill.define.{Discover, ExternalModule, Input, Module, Task}
-import mill.api.{Logger, Result}
-import os.{CommandResult, SubprocessException}
+import mill.api.Logger
+import mill.define.{Discover, ExternalModule, Input, Module}
+import os.SubprocessException
+
+import scala.util.control.NonFatal
 
 trait VcsVersion extends Module {
 
@@ -20,7 +21,7 @@ trait VcsVersion extends Module {
   private[this] def calcVcsState(logger: Logger): VcsState = {
     val curHeadRaw =
       try {
-        Option(os.proc("git", "rev-parse", "HEAD").call(cwd = vcsBasePath).out.trim)
+        Option(os.proc("git", "rev-parse", "HEAD").call(cwd = vcsBasePath).out.trim())
       } catch {
         case e: SubprocessException =>
           logger.error(s"${vcsBasePath} is not a git repository.")
@@ -80,7 +81,7 @@ trait VcsVersion extends Module {
                   "--count"
                 ).call()
                   .out
-                  .trim
+                  .trim()
                   .toInt
               }
               .getOrElse(0)
@@ -103,7 +104,6 @@ trait VcsVersion extends Module {
 
 }
 
-object VcsVersion extends ExternalModule with VcsVersion {
+object VcsVersion extends ExternalModule with VcsVersion with VcsVersionPlatformCompanion {
   lazy val millDiscover = Discover[this.type]
-  implicit def millScoptEvaluatorReads[T] = new mill.main.EvaluatorScopt[T]()
 }

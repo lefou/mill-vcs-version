@@ -7,8 +7,9 @@ import $ivy.`com.github.lolgab::mill-mima::0.0.18`
 // imports
 import mill._
 import mill.contrib.scoverage.ScoverageModule
-import mill.define.{Command, Target, Task, TaskModule}
+import mill.define.{Command, Sources, Target, Task, TaskModule}
 import mill.scalalib._
+import mill.scalalib.api.ZincWorkerUtil
 import mill.scalalib.publish._
 import de.tobiasroeser.mill.integrationtest._
 import de.tobiasroeser.mill.vcs.version._
@@ -32,8 +33,8 @@ trait Deps {
 }
 
 object Deps_0_11 extends Deps {
-  override def millPlatform = millVersion // only valid for exact milestones!
-  override def millVersion = "0.11.0-M7"
+  override def millPlatform = "0.11.0-M8" // only valid for exact milestones!
+  override def millVersion = "0.11.0-M8-2-f5e4e2"
   override def scalaVersion = "2.13.10"
   override def testWithMill = Seq(millVersion)
   override def mimaPreviousVersions = super.mimaPreviousVersions.reverse.takeWhile(_ != "0.3.0").reverse
@@ -91,8 +92,15 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
     )
   }
 
-  override def javacOptions = Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8")
-  override def scalacOptions = Seq("-target:jvm-1.8", "-encoding", "UTF-8")
+  override def sources: Sources = T.sources {
+    Seq(PathRef(millSourcePath / "src")) ++
+      (ZincWorkerUtil.matchingVersions(millApiVersion) ++
+        ZincWorkerUtil.versionRanges(millApiVersion, crossDeps.map(_.millPlatform)))
+        .map(p => PathRef(millSourcePath / s"src-${p}"))
+  }
+
+  override def javacOptions = Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8", "-deprecation")
+  override def scalacOptions = Seq("-target:jvm-1.8", "-encoding", "UTF-8", "-deprecation")
 
   def pomSettings = T {
     PomSettings(
@@ -129,7 +137,7 @@ class CoreCross(override val millApiVersion: String) extends BaseModule {
 object itest extends Cross[ItestCross](millItestVersions.map(_._1): _*) with TaskModule {
   override def defaultCommandName(): String = "test"
   def testCached: T[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).testCached
-  def test(args: String*): Command[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).test()
+  def test(args: String*): Command[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).test(args: _*)
 }
 class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
 
