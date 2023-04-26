@@ -1,5 +1,5 @@
 = mill-vcs-version - Derive a version from Version Control
-:version: 0.3.0
+:version: 0.3.1
 :mill-platform: 0.10
 :project-home: https://github.com/lefou/mill-vcs-version
 :toc:
@@ -8,7 +8,7 @@
 ifdef::env-github[]
 image:https://github.com/lefou/mill-vcs-version/workflows/.github/workflows/build.yml/badge.svg["Build Status (GitHub Actions)", link="https://github.com/lefou/mill-vcs-version/actions"]
 image:https://codecov.io/gh/lefou/mill-vcs-version/branch/main/graph/badge.svg[Test Coverage (Codecov.io), link="https://codecov.io/gh/lefou/mill-vcs-version"]
-image:https://index.scala-lang.org/lefou/mill-vcs-version/de.tobiasroeser.mill.vcs.version_mill{mill-platform}/latest.svg["Latest version (Scaladex)", link="https://index.scala-lang.org/lefou/mill-vcs-version/de.tobiasroeser.mill.vcs.version_mill{mill-platform}"]
+image:https://index.scala-lang.org/lefou/mill-vcs-version/de.tobiasroeser.mill.vcs.version/latest-by-scala-version.svg?platform=mill{mill-platform}["Latest version (Scaladex)", link="https://index.scala-lang.org/lefou/mill-vcs-version/de.tobiasroeser.mill.vcs.version"]
 endif::[]
 
 Mill plugin to derive a version from (last) git tag and edit state.
@@ -109,7 +109,13 @@ Contributing::
 
 == Releases / Changelog
 
-=== mill-vcs-version 0.3.0 - 2022-09-28
+=== 0.3.1 - 2023-04-26
+
+* Added support for Mill 0.11.0-M8
+* Dependency updates: scala 2.13.10 / 2.12.17
+* Internal improvements
+
+=== 0.3.0 - 2022-09-28
 
 * Support omitting the commit count
 * Don't fail for projects not under version control
@@ -117,34 +123,34 @@ Contributing::
 * Commit to `EarlySemVer` version scheme
 * Updated dependencies and tools
 
-=== mill-vcs-version 0.2.0 - 2022-08-09
+=== 0.2.0 - 2022-08-09
 
 * Version tags starting with a `v`-prefix are now properly stripped by default.
 
-=== mill-vcs-version 0.1.4 - 2022-01-17
+=== 0.1.4 - 2022-01-17
 
 * Added support for mill 0.10.x
 
-=== mill-vcs-version 0.1.3 - 2022-01-14
+=== 0.1.3 - 2022-01-14
 
 _For proper Mill 0.10 support, please use 0.1.4 or newer._
 
 * Added support for mill 0.10.0
 
-=== mill-vcs-version 0.1.2 - 2021-09-18
+=== 0.1.2 - 2021-09-18
 
 * Added support for mill 0.10.0-M2
 * Improved error handling
 
-=== mill-vcs-version 0.1.1 - 2021-01-21
+=== 0.1.1 - 2021-01-21
 
 * Fixed handling of repos without any (previous) tag
 
-=== mill-vcs-version 0.1.0 - 2020-12-01
+=== 0.1.0 - 2020-12-01
 
 * Support for mill API 0.9.3
 * Introduce a new artifact name suffix (`_mill0.9` for mil 0.9.3) to support multiple mill API versions.
 
-=== mill-vcs-version 0.0.1 - 2020-06-22
+=== 0.0.1 - 2020-06-22
 
 * Initial Release, intended for internal/test usage
