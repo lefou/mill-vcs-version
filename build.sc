@@ -14,7 +14,7 @@ import mill.scalalib.publish._
 import de.tobiasroeser.mill.integrationtest._
 import de.tobiasroeser.mill.vcs.version._
 import com.github.lolgab.mill.mima.Mima
-import os.Path
+import scala.util.Try
 
 val baseDir = build.millSourcePath
 
@@ -32,6 +32,12 @@ trait Deps {
   val scoverageRuntime = ivy"org.scoverage::scalac-scoverage-runtime:${scoverageVersion}"
 }
 
+class Deps_latest(override val millVersion: String) extends Deps {
+  override def millPlatform = millVersion
+  override def scalaVersion = "2.13.10"
+  override def testWithMill = Seq(millVersion)
+  override def mimaPreviousVersions = Seq()
+}
 object Deps_0_11 extends Deps {
   override def millPlatform = "0.11.0-M8" // only valid for exact milestones!
   override def millVersion = "0.11.0-M8-2-f5e4e2"
@@ -66,7 +72,17 @@ object Deps_0_6 extends Deps {
   override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", millVersion)
 }
 
-val crossDeps = Seq(Deps_0_11, Deps_0_10, Deps_0_9, Deps_0_7, Deps_0_6)
+val latestDeps: Seq[Deps] = {
+  val path = baseDir / "MILL_DEV_VERSION"
+  println(s"Checking for file ${path}")
+  if (os.exists(path)) {
+    Try { Seq(new Deps_latest(os.read(path).trim())) }
+      .recover { _ => Seq() }
+  }.get
+  else Seq()
+}
+
+val crossDeps: Seq[Deps] = (Seq(Deps_0_11, Deps_0_10, Deps_0_9, Deps_0_7, Deps_0_6) ++ latestDeps).distinct
 val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
 val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 
@@ -144,7 +160,7 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
   val millApiVersion = millItestVersions.toMap.apply(millItestVersion).millPlatform
   def deps: Deps = millApiVersions.toMap.apply(millApiVersion)
 
-  override def millSourcePath: Path = super.millSourcePath / os.up
+  override def millSourcePath: os.Path = super.millSourcePath / os.up
   override def millTestVersion = millItestVersion
   override def pluginsUnderTest = Seq(core(millApiVersion))
 
@@ -189,4 +205,18 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
     PathRef(T.dest)
   }
 
+}
+
+def findLatestMill(toFile: String = "") = T.command {
+  import coursier._
+  val versions = Versions()
+    .withModule(mod"com.lihaoyi:mill-main_2.13")
+    .run()
+  println(s"Latest Mill versions: ${versions.latest}")
+  if (toFile.nonEmpty) {
+    val path = os.Path.expandUser(toFile, os.pwd)
+    println(s"Writing file: ${path}")
+    os.write.over(path, versions.latest, createFolders = true)
+  }
+  versions.latest
 }
