@@ -74,6 +74,7 @@ object Deps_0_6 extends Deps {
 
 val latestDeps: Seq[Deps] = {
   val path = baseDir / "MILL_DEV_VERSION"
+  interp.watch(path)
   println(s"Checking for file ${path}")
   if (os.exists(path)) {
     Try { Seq(new Deps_latest(os.read(path).trim())) }
