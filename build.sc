@@ -83,7 +83,13 @@ val latestDeps: Seq[Deps] = {
   else Seq()
 }
 
-val crossDeps: Seq[Deps] = (Seq(Deps_0_11, Deps_0_10, Deps_0_9, Deps_0_7, Deps_0_6) ++ latestDeps).distinct
+val crossDeps: Seq[Deps] = (latestDeps ++ Seq(
+//  Deps_0_11,
+  Deps_0_10,
+  Deps_0_9,
+  Deps_0_7,
+  Deps_0_6
+)).distinct
 val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
 val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 

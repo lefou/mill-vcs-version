@@ -2,12 +2,12 @@ package de.tobiasroeser.mill.vcs.version
 
 import mill.T
 import mill.api.Logger
-import mill.define.{Discover, ExternalModule, Input, Module}
+import mill.define.{Discover, ExternalModule}
 import os.SubprocessException
 
 import scala.util.control.NonFatal
 
-trait VcsVersion extends Module {
+trait VcsVersion extends VcsVersionPlatform {
 
   def vcsBasePath: os.Path = millSourcePath
 
@@ -16,7 +16,7 @@ trait VcsVersion extends Module {
    *
    * @return A tuple of (the latest tag, the calculated version string)
    */
-  def vcsState: Input[VcsState] = T.input { calcVcsState(T.log) }
+  override def vcsState = T.input { calcVcsState(T.log) }
 
   private[this] def calcVcsState(logger: Logger): VcsState = {
     val curHeadRaw =
