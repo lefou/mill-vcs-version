@@ -74,6 +74,7 @@ object Deps_0_6 extends Deps {
 
 val latestDeps: Seq[Deps] = {
   val path = baseDir / "MILL_DEV_VERSION"
+  interp.watch(path)
   println(s"Checking for file ${path}")
   if (os.exists(path)) {
     Try { Seq(new Deps_latest(os.read(path).trim())) }
@@ -209,9 +210,10 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
 
 def findLatestMill(toFile: String = "") = T.command {
   import coursier._
-  val versions = Versions()
-    .withModule(mod"com.lihaoyi:mill-main_2.13")
-    .run()
+  val versions =
+    Versions(cache.FileCache().withTtl(concurrent.duration.Duration(1, java.util.concurrent.TimeUnit.MINUTES)))
+      .withModule(mod"com.lihaoyi:mill-main_2.13")
+      .run()
   println(s"Latest Mill versions: ${versions.latest}")
   if (toFile.nonEmpty) {
     val path = os.Path.expandUser(toFile, os.pwd)
