@@ -5,6 +5,7 @@ on:
     tags:
       - '**'
   pull_request:
+  workflow_dispatch:
 
 # cancel older runs of a pull request;
 # this will not cancel anything for normal git pushes
@@ -25,12 +26,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - run: git fetch --prune --tags --unshallow
+        with:
+          fetch-depth: 0
+
+      - uses: coursier/cache-action@v6
 
       - uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java-version }}
           distribution: temurin
+
+      - run: ./millw -i findLatestMill --toFile MILL_DEV_VERSION
+        if: matrix.os != 'windows-latest' && github.event_name == 'workflow_dispatch'
+      - run: ./millw.bat -i findLatestMill --toFile MILL_DEV_VERSION
+        if: matrix.os == 'windows-latest' && github.event_name == 'workflow_dispatch'
 
       - run: ./millw -i __.publishLocal testRepo
         if: matrix.os != 'windows-latest'
@@ -62,6 +71,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - uses: coursier/cache-action@v6
+
       - uses: actions/setup-java@v3
         with:
           java-version: 8
@@ -77,12 +89,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - run: git fetch --prune --tags --unshallow
+        with:
+          fetch-depth: 0
+
+      - uses: coursier/cache-action@v6
 
       - uses: actions/setup-java@v3
         with:
           java-version: 8
           distribution: temurin
+
+      - run: ./millw -i findLatestMill --toFile MILL_DEV_VERSION
+        if: matrix.os != 'windows-latest' && github.event_name == 'workflow_dispatch'
+      - run: ./millw.bat -i findLatestMill --toFile MILL_DEV_VERSION
+        if: matrix.os == 'windows-latest' && github.event_name == 'workflow_dispatch'
 
       - run: ./millw -i __.publishLocal $(pwd)/testRepo
         if: matrix.os != 'windows-latest'
@@ -98,3 +118,8 @@ jobs:
 
       - name: Publish to Maven Central
         run: ./millw -i mill.scalalib.PublishModule/publishAll --sonatypeCreds "${{ secrets.SONATYPE_CREDS }}" --gpgArgs "--passphrase=${{ secrets.GPG_SECRET_KEY_PASS}},--batch,--yes,-a,-b,--pinentry-mode,loopback" --publishArtifacts __.publishArtifacts --readTimeout 600000 --awaitTimeout 600000 --release true --signed true
+        if: github.event_name != 'workflow_dispatch'
+
+      - name: Publish for Mill development version to Maven Central
+        run: ./millw -i mill.scalalib.PublishModule/publishAll --sonatypeCreds "${{ secrets.SONATYPE_CREDS }}" --gpgArgs "--passphrase=${{ secrets.GPG_SECRET_KEY_PASS}},--batch,--yes,-a,-b,--pinentry-mode,loopback" --publishArtifacts __[$(<MILL_DEV_VERSION)].publishArtifacts --readTimeout 600000 --awaitTimeout 600000 --release true --signed true
+        if: github.event_name == 'workflow_dispatch'
