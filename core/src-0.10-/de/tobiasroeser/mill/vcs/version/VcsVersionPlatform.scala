@@ -1,5 +1,7 @@
 package de.tobiasroeser.mill.vcs.version
 
+import mill.T
+import mill.api.Logger
 import mill.define.{Module, Input}
 
 trait VcsVersionPlatform extends Module {
@@ -9,7 +11,11 @@ trait VcsVersionPlatform extends Module {
    *
    * @return A tuple of (the latest tag, the calculated version string)
    */
-  def vcsState: Input[VcsState]
+  def vcsState: Input[VcsState] = T.input {
+    calcVcsState(T.log)
+  }
+
+  private[version] def calcVcsState(logger: Logger): VcsState
 }
 
 trait VcsVersionPlatformCompanion {

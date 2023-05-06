@@ -11,14 +11,7 @@ trait VcsVersion extends VcsVersionPlatform {
 
   def vcsBasePath: os.Path = millSourcePath
 
-  /**
-   * Calc a publishable version based on git tags and dirty state.
-   *
-   * @return A tuple of (the latest tag, the calculated version string)
-   */
-  override def vcsState = T.input { calcVcsState(T.log) }
-
-  private[this] def calcVcsState(logger: Logger): VcsState = {
+  override private[version] def calcVcsState(logger: Logger): VcsState = {
     val curHeadRaw =
       try {
         Option(os.proc("git", "rev-parse", "HEAD").call(cwd = vcsBasePath).out.trim())
