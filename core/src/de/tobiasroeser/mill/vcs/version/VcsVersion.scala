@@ -11,6 +11,9 @@ trait VcsVersion extends Module {
 
   def vcsBasePath: os.Path = millSourcePath
 
+  // No explicit return type, as it changed between Mill 0.11.0-M8 and -M9 (Input -> Target)
+  // and any attempt to do it correctly resulted in binary compatibility breakage.
+  // Details: https://github.com/lefou/mill-vcs-version/pull/109
   def vcsState = T.input {
     calcVcsState(T.log)
   }
