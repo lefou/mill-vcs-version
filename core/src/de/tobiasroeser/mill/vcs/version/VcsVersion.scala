@@ -11,6 +11,11 @@ trait VcsVersion extends Module {
 
   def vcsBasePath: os.Path = millSourcePath
 
+  /**
+   * Calc a publishable version based on git tags and dirty state.
+   *
+   * @return A tuple of (the latest tag, the calculated version string)
+   */
   // No explicit return type, as it changed between Mill 0.11.0-M8 and -M9 (Input -> Target)
   // and any attempt to do it correctly resulted in binary compatibility breakage.
   // Details: https://github.com/lefou/mill-vcs-version/pull/109
