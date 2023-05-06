@@ -2,16 +2,20 @@ package de.tobiasroeser.mill.vcs.version
 
 import mill.T
 import mill.api.Logger
-import mill.define.{Discover, ExternalModule}
+import mill.define.{Discover, ExternalModule, Module}
 import os.SubprocessException
 
 import scala.util.control.NonFatal
 
-trait VcsVersion extends VcsVersionPlatform {
+trait VcsVersion extends Module {
 
   def vcsBasePath: os.Path = millSourcePath
 
-  override private[version] def calcVcsState(logger: Logger): VcsState = {
+  def vcsState = T.input {
+    calcVcsState(T.log)
+  }
+
+  private def calcVcsState(logger: Logger): VcsState = {
     val curHeadRaw =
       try {
         Option(os.proc("git", "rev-parse", "HEAD").call(cwd = vcsBasePath).out.trim())
