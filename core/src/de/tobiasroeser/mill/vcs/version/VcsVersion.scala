@@ -21,7 +21,7 @@ trait VcsVersion extends Module {
   private[this] def calcVcsState(logger: Logger): VcsState = {
     val curHeadRaw =
       try {
-        Option(os.proc("git", "rev-parse", "HEAD").call(cwd = vcsBasePath).out.trim())
+        Option(os.proc("git", "rev-parse", "HEAD").call(cwd = vcsBasePath, stderr = os.Pipe).out.trim())
       } catch {
         case e: SubprocessException =>
           logger.error(s"${vcsBasePath} is not a git repository.")
