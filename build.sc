@@ -39,8 +39,8 @@ class Deps_latest(override val millVersion: String) extends Deps {
   override def mimaPreviousVersions = Seq()
 }
 object Deps_0_11 extends Deps {
-  override def millPlatform = "0.11.0-M9" // only valid for exact milestones!
-  override def millVersion = "0.11.0-M9"
+  override def millPlatform = "0.11.0-M10" // only valid for exact milestones!
+  override def millVersion = "0.11.0-M10"
   override def scalaVersion = "2.13.10"
   override def testWithMill = Seq(millVersion)
   override def mimaPreviousVersions = super.mimaPreviousVersions.reverse.takeWhile(_ != "0.3.0").reverse
@@ -50,7 +50,7 @@ object Deps_0_10 extends Deps {
   override def millVersion = "0.10.0" // scala-steward:off
   override def scalaVersion = "2.13.10"
   // 0.10.4 and 0.10.3 don't run in CI on Windows
-  override def testWithMill = Seq("0.10.10", "0.10.5", millVersion)
+  override def testWithMill = Seq("0.10.12", "0.10.5", millVersion)
 }
 object Deps_0_9 extends Deps {
   override def millPlatform = "0.9"
