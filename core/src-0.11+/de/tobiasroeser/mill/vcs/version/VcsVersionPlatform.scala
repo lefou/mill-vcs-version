@@ -1,5 +1,7 @@
 package de.tobiasroeser.mill.vcs.version
 
+import scala.annotation.nowarn
+
 trait VcsVersionPlatformCompanion {
-  implicit def millScoptEvaluatorReads[T] = new mill.main.EvaluatorTokenReader[T]()
+  import mill.main.TokenReaders.millEvaluatorTokenReader
 }
