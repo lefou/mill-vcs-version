@@ -14,7 +14,7 @@ import mill.scalalib.publish._
 import de.tobiasroeser.mill.integrationtest._
 import de.tobiasroeser.mill.vcs.version._
 import com.github.lolgab.mill.mima.Mima
-import scala.util.Try
+import scala.util.{Properties, Try}
 
 val baseDir = build.millSourcePath
 
@@ -111,7 +111,11 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
         .map(p => PathRef(millSourcePath / s"src-${p}"))
   }
 
-  override def javacOptions = Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8", "-deprecation")
+  override def javacOptions = {
+    (if (Properties.isJavaAtLeast(9)) Seq("--release", "8") else Seq("-source", "1.8", "-target", "1.8")) ++
+      Seq("-encoding", "UTF-8", "-deprecation")
+  }
+
   override def scalacOptions = Seq("-target:jvm-1.8", "-encoding", "UTF-8", "-deprecation")
 
   def pomSettings = T {
