@@ -104,6 +104,6 @@ trait VcsVersion extends Module {
 
 }
 
-object VcsVersion extends ExternalModule with VcsVersion with VcsVersionPlatformCompanion {
+object VcsVersion extends ExternalModule with VcsVersion {
   lazy val millDiscover = Discover[this.type]
 }
