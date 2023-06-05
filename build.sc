@@ -24,7 +24,7 @@ trait Deps {
   def scalaVersion: String = "2.13.11"
   def testWithMill: Seq[String]
 
-  def mimaPreviousVersions: Seq[String] = Seq("0.3.0")
+  def mimaPreviousVersions: Seq[String] = Seq()
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
   val scalaTest = ivy"org.scalatest::scalatest:3.2.16"
@@ -41,7 +41,6 @@ object Deps_0_11 extends Deps {
   override def millPlatform = "0.11.0-M11" // only valid for exact milestones!
   override def millVersion = "0.11.0-M11"
   override def testWithMill = Seq(millVersion)
-  override def mimaPreviousVersions = super.mimaPreviousVersions.reverse.takeWhile(_ != "0.3.0").reverse
 }
 object Deps_0_10 extends Deps {
   override def millPlatform = "0.10"
