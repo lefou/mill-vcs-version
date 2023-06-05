@@ -21,7 +21,7 @@ val baseDir = build.millSourcePath
 trait Deps {
   def millPlatform: String
   def millVersion: String
-  def scalaVersion: String
+  def scalaVersion: String = "2.13.11"
   def testWithMill: Seq[String]
 
   def mimaPreviousVersions: Seq[String] = Seq("0.3.0")
@@ -34,41 +34,36 @@ trait Deps {
 
 class Deps_latest(override val millVersion: String) extends Deps {
   override def millPlatform = millVersion
-  override def scalaVersion = "2.13.10"
   override def testWithMill = Seq(millVersion)
   override def mimaPreviousVersions = Seq()
 }
 object Deps_0_11 extends Deps {
   override def millPlatform = "0.11.0-M10" // only valid for exact milestones!
   override def millVersion = "0.11.0-M10"
-  override def scalaVersion = "2.13.10"
   override def testWithMill = Seq(millVersion)
   override def mimaPreviousVersions = super.mimaPreviousVersions.reverse.takeWhile(_ != "0.3.0").reverse
 }
 object Deps_0_10 extends Deps {
   override def millPlatform = "0.10"
   override def millVersion = "0.10.0" // scala-steward:off
-  override def scalaVersion = "2.13.10"
   // 0.10.4 and 0.10.3 don't run in CI on Windows
   override def testWithMill = Seq("0.10.12", "0.10.5", millVersion)
 }
 object Deps_0_9 extends Deps {
   override def millPlatform = "0.9"
   override def millVersion = "0.9.3" // scala-steward:off
-  override def scalaVersion = "2.13.10"
   override def testWithMill =
     Seq("0.9.12", "0.9.11", "0.9.10", "0.9.9", "0.9.8", "0.9.7", "0.9.6", "0.9.5", "0.9.4", millVersion)
 }
 object Deps_0_7 extends Deps {
   override def millPlatform = "0.7"
   override def millVersion = "0.7.0" // scala-steward:off
-  override def scalaVersion = "2.13.10"
   override def testWithMill = Seq("0.8.0", "0.7.4", "0.7.3", "0.7.2", "0.7.1", millVersion)
 }
 object Deps_0_6 extends Deps {
   override def millPlatform = "0.6"
   override def millVersion = "0.6.0" // scala-steward:off
-  override def scalaVersion = "2.12.17"
+  override def scalaVersion = "2.12.18"
   override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", millVersion)
 }
 
