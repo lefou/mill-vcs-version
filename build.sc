@@ -84,6 +84,8 @@ val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 
 /** Shared configuration. */
 trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModule with Mima {
+  // workaround for issue https://github.com/com-lihaoyi/mill/issues/2579
+  override lazy val scoverage: ScoverageData = new ScoverageData {}
   def millApiVersion: String
   def deps: Deps = millApiVersions.toMap.apply(millApiVersion)
   def crossScalaVersion = deps.scalaVersion
