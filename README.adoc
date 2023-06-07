@@ -1,6 +1,6 @@
 = mill-vcs-version - Derive a version from Version Control
-:version: 0.3.1
-:mill-platform: 0.10
+:version: 0.4.0
+:mill-platform: 0.11
 :project-home: https://github.com/lefou/mill-vcs-version
 :toc:
 :toc-placement: preamble
@@ -74,6 +74,7 @@ Please make sure to use the correct _mill platform suffix_ matching your used mi
 [options="header"]
 |===
 | mill version  | mill platform | suffix | example
+| 0.11.x | 0.11 | `_mill0.11` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::{version}````
 | 0.10.x | 0.10 | `_mill0.10` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::{version}````
 | 0.9.3 - 0.9.9      | 0.9 | `_mill0.9` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.9:{version}````
 | 0.7.0 - 0.8.0 | 0.7 | `_mill0.7` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.7:{version}````
@@ -108,6 +109,12 @@ Contributing::
 
 
 == Releases / Changelog
+
+=== 0.4.0 - 2023-06-07
+
+* Support Mill 0.11
+* Dependency updates: Scala 2.13.11 / 2.12.18
+* Silence stderr output from git
 
 === 0.3.1 - 2023-04-26
 
