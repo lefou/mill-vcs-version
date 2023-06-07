@@ -1,6 +1,6 @@
 // mill plugins
-import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.3.1`
-import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.7.0`
+import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.3.1-14-7e2bd2`
+import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.7.0-9-a2b201`
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:`
 import $ivy.`com.github.lolgab::mill-mima::0.0.22`
 
@@ -135,8 +135,9 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
 }
 
 /* The actual mill plugin compilied against different mill APIs. */
-object core extends Cross[CoreCross](millApiVersions.map(_._1): _*)
-class CoreCross(override val millApiVersion: String) extends BaseModule {
+object core extends Cross[CoreCross](millApiVersions.map(_._1))
+trait CoreCross extends BaseModule with Cross.Module[String] {
+  override def millApiVersion: String = crossValue
 
   override def artifactName = "de.tobiasroeser.mill.vcs.version"
 
@@ -150,12 +151,14 @@ class CoreCross(override val millApiVersion: String) extends BaseModule {
 }
 
 /** Integration tests. */
-object itest extends Cross[ItestCross](millItestVersions.map(_._1): _*) with TaskModule {
+object itest extends Cross[ItestCross](millItestVersions.map(_._1)) with TaskModule {
   override def defaultCommandName(): String = "test"
   def testCached: T[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).testCached
   def test(args: String*): Command[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).test(args: _*)
 }
-class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
+trait ItestCross extends MillIntegrationTestModule with Cross.Module[String] {
+
+  def millItestVersion = crossValue
 
   val millApiVersion = millItestVersions.toMap.apply(millItestVersion).millPlatform
   def deps: Deps = millApiVersions.toMap.apply(millApiVersion)
@@ -165,7 +168,7 @@ class ItestCross(millItestVersion: String) extends MillIntegrationTestModule {
   override def pluginsUnderTest = Seq(core(millApiVersion))
 
   /** Replaces the plugin jar with a scoverage-enhanced version of it. */
-  override def pluginUnderTestDetails: Task.Sequence[(PathRef, (PathRef, (PathRef, (PathRef, (PathRef, Artifact)))))] =
+  override def pluginUnderTestDetails: Task[Seq[(PathRef, (PathRef, (PathRef, (PathRef, (PathRef, Artifact)))))]] =
     Target.traverse(pluginsUnderTest) { p =>
       val jar = p match {
         case p: ScoverageModule => p.scoverage.jar
