@@ -38,9 +38,10 @@ class Deps_latest(override val millVersion: String) extends Deps {
   override def mimaPreviousVersions = Seq()
 }
 object Deps_0_11 extends Deps {
-  override def millPlatform = "0.11.0-M11" // only valid for exact milestones!
-  override def millVersion = "0.11.0-M11"
+  override def millPlatform = "0.11"
+  override def millVersion = "0.11.0" // scala-steward:off
   override def testWithMill = Seq(millVersion)
+  override def mimaPreviousVersions = Seq()
 }
 object Deps_0_10 extends Deps {
   override def millPlatform = "0.10"
