@@ -73,7 +73,9 @@ lazy val latestDeps: Seq[Deps] = {
   interp.watch(path)
   println(s"Checking for file ${path}")
   if (os.exists(path)) {
-    Try { Seq(new Deps_latest(os.read(path).trim())) }
+    Try {
+      Seq(new Deps_latest(os.read(path).trim()))
+    }
       .recover { _ => Seq() }
   }.get
   else Seq()
@@ -84,10 +86,10 @@ lazy val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
 lazy val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 
 /** Shared configuration. */
-trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModule with Mima {
+trait BaseModule extends ScalaModule with PublishModule with ScoverageModule with Mima {
   def millApiVersion: String
   def deps: Deps = millApiVersions.toMap.apply(millApiVersion)
-  def crossScalaVersion = deps.scalaVersion
+  def scalaVersion = deps.scalaVersion
   override def artifactSuffix: T[String] = s"_mill${deps.millPlatform}_${artifactScalaVersion()}"
 
   override def ivyDeps = T {
@@ -105,7 +107,7 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
     )
   }
 
-  override def sources: Sources = T.sources {
+  override def sources = T.sources {
     Seq(PathRef(millSourcePath / "src")) ++
       (ZincWorkerUtil.matchingVersions(millApiVersion) ++
         ZincWorkerUtil.versionRanges(millApiVersion, crossDeps.map(_.millPlatform)))
@@ -139,13 +141,9 @@ trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModul
 object core extends Cross[CoreCross](millApiVersions.map(_._1))
 trait CoreCross extends BaseModule with Cross.Module[String] {
   override def millApiVersion: String = crossValue
-
   override def artifactName = "de.tobiasroeser.mill.vcs.version"
-
   override def skipIdea: Boolean = deps != crossDeps.head
-
   override def compileIvyDeps = Agg(deps.millMain)
-
   object test extends Tests with TestModule.ScalaTest {
     override def ivyDeps = Agg(deps.scalaTest, deps.millMain)
   }
@@ -158,7 +156,6 @@ object itest extends Cross[ItestCross](millItestVersions.map(_._1)) with TaskMod
   def test(args: String*): Command[Seq[TestCase]] = itest(millItestVersions.map(_._1).head).test(args: _*)
 }
 trait ItestCross extends MillIntegrationTestModule with Cross.Module[String] {
-
   def millItestVersion = crossValue
 
   val millApiVersion = millItestVersions.toMap.apply(millItestVersion).millPlatform
@@ -172,7 +169,7 @@ trait ItestCross extends MillIntegrationTestModule with Cross.Module[String] {
   override def pluginUnderTestDetails: Task[Seq[(PathRef, (PathRef, (PathRef, (PathRef, (PathRef, Artifact)))))]] =
     Target.traverse(pluginsUnderTest) { p =>
       val jar = p match {
-        case p: ScoverageModule => p.scoverage.jar
+        case p: ScoverageModule => p.scoverage().jar
         case p                  => p.jar
       }
       jar zip (p.sourceJar zip (p.docJar zip (p.pom zip (p.ivy zip p.artifactMetadata))))
@@ -199,7 +196,10 @@ trait ItestCross extends MillIntegrationTestModule with Cross.Module[String] {
     }
   }
 
-  override def perTestResources = T.sources { Seq(generatedSharedSrc()) }
+  override def perTestResources = T.sources {
+    Seq(generatedSharedSrc())
+  }
+
   def generatedSharedSrc = T {
     os.write(
       T.dest / "shared.sc",
