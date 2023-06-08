@@ -161,7 +161,6 @@ trait ItestCross extends MillIntegrationTestModule with Cross.Module[String] {
   val millApiVersion = millItestVersions.toMap.apply(millItestVersion).millPlatform
   def deps: Deps = millApiVersions.toMap.apply(millApiVersion)
 
-  override def millSourcePath: os.Path = super.millSourcePath / os.up
   override def millTestVersion = millItestVersion
   override def pluginsUnderTest = Seq(core(millApiVersion))
 
