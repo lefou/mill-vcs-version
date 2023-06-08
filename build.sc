@@ -16,7 +16,8 @@ import de.tobiasroeser.mill.vcs.version._
 import com.github.lolgab.mill.mima.Mima
 import scala.util.{Properties, Try}
 
-val baseDir = build.millSourcePath
+// `lazy` to work around issue https://github.com/com-lihaoyi/mill/issues/2582
+lazy val baseDir = build.millSourcePath
 
 trait Deps {
   def millPlatform: String
@@ -67,7 +68,7 @@ object Deps_0_6 extends Deps {
   override def testWithMill = Seq("0.6.3", "0.6.2", "0.6.1", millVersion)
 }
 
-val latestDeps: Seq[Deps] = {
+lazy val latestDeps: Seq[Deps] = {
   val path = baseDir / "MILL_DEV_VERSION"
   interp.watch(path)
   println(s"Checking for file ${path}")
@@ -78,14 +79,12 @@ val latestDeps: Seq[Deps] = {
   else Seq()
 }
 
-val crossDeps: Seq[Deps] = (Seq(Deps_0_11, Deps_0_10, Deps_0_9, Deps_0_7, Deps_0_6) ++ latestDeps).distinct
-val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
-val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
+lazy val crossDeps: Seq[Deps] = (Seq(Deps_0_11, Deps_0_10, Deps_0_9, Deps_0_7, Deps_0_6) ++ latestDeps).distinct
+lazy val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
+lazy val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 
 /** Shared configuration. */
 trait BaseModule extends CrossScalaModule with PublishModule with ScoverageModule with Mima {
-  // workaround for issue https://github.com/com-lihaoyi/mill/issues/2579
-  override lazy val scoverage: ScoverageData = new ScoverageData {}
   def millApiVersion: String
   def deps: Deps = millApiVersions.toMap.apply(millApiVersion)
   def crossScalaVersion = deps.scalaVersion
