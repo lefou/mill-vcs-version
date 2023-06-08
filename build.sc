@@ -169,7 +169,7 @@ trait ItestCross extends MillIntegrationTestModule with Cross.Module[String] {
   override def pluginUnderTestDetails: Task[Seq[(PathRef, (PathRef, (PathRef, (PathRef, (PathRef, Artifact)))))]] =
     Target.traverse(pluginsUnderTest) { p =>
       val jar = p match {
-        case p: ScoverageModule => p.scoverage().jar
+        case p: ScoverageModule => p.scoverage.jar
         case p                  => p.jar
       }
       jar zip (p.sourceJar zip (p.docJar zip (p.pom zip (p.ivy zip p.artifactMetadata))))
