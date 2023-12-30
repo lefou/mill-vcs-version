@@ -83,11 +83,11 @@ Please make sure to use the correct _mill platform suffix_ matching your used mi
 
 == Github Actions
 
-Confusing behaviour in a github action environment, is likely a function of some unintentional or duplicate misuse of `action/checkout`. To check; 
+Confusing behaviour in a github action environment, is likely a function of some unintentional use or duplicated `action/checkout`. Things to check; 
 
 - Ensure the complete repository history is available. (fetch-depth: 0)
-- Ensure the tags are available (fetch-tags: true), by defult I believe this should also be set, if the fetch depth is 0.
-- That _all_ (not just the first - *cough*) checkout actions in the run, satisfy the two conditions above.
+- Ensure the tags are available (fetch-tags: true), this should also be set by default, if the fetch depth is 0.
+- That _all_ (and not just the first!) checkout actions in the run, satisfy the two conditions above.
 
 Example;
 ```
