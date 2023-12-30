@@ -81,6 +81,21 @@ Please make sure to use the correct _mill platform suffix_ matching your used mi
 | 0.6.0 - 0.6.3 | 0.6 | `_mill0.6` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.6:{version}````
 |===
 
+== Github Actions
+
+Confusing behaviour in a github action environment, is likely a function of some unintentional or duplicate misuse of `action/checkout`. To check; 
+
+- Ensure the complete repository history is available. (fetch-depth: 0)
+- Ensure the tags are available (fetch-tags: true), by defult I believe this should also be set, if the fetch depth is 0.
+- That _all_ (not just the first - *cough*) checkout actions in the run, satisfy the two conditions above.
+
+Example;
+```
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+```
 
 == License
 
