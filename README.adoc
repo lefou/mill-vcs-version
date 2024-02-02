@@ -81,21 +81,26 @@ Please make sure to use the correct _mill platform suffix_ matching your used mi
 | 0.6.0 - 0.6.3 | 0.6 | `_mill0.6` | ```$ivy.`de.tototec::de.tobiasroeser.mill.vcs.version_mill0.6:{version}````
 |===
 
-== Github Actions
+== Caveats and Known Issues
 
-Confusing behaviour in a github action environment, is likely a function of some unintentional use or duplicated `action/checkout`. Things to check; 
+=== Limited git history in CI / Github Actions
 
-- Ensure the complete repository history is available. (fetch-depth: 0)
-- Ensure the tags are available (fetch-tags: true), this should also be set by default, if the fetch depth is 0.
-- That _all_ (and not just the first!) checkout actions in the run, satisfy the two conditions above.
+If you witness confusing behavior in a CI environment, it's likely due to limited git history.
 
-Example;
-```
+E.g. on Github, the default setup for `action/checkout` fetches only 50 commit back from the current version. That means, once your last tag is older than that, you will get strange version numbers, probably starting with `0.0.0`.
+
+So, in your CI setup, make sure to:
+* git checkout the complete history
+* git checkout all tags
+
+For Github Actions, make sure all instances of `action/checkout` use the following setup.
+
+```yaml
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          fetch-tags: true
-```
+          # next line is redundant as it's the default
+          fetch-tags: true 
 
 == License
 
