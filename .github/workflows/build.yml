@@ -60,7 +60,7 @@ jobs:
         shell: cmd
 
       - name: Upload scoverage reports to codecov.io
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           files: ./out/core/0.11/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.10/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.9/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.7/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.6/scoverage/xmlReport.dest/scoverage.xml
         continue-on-error: true
