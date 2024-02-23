@@ -29,7 +29,7 @@ trait Deps {
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
   val scalaTest = ivy"org.scalatest::scalatest:3.2.18"
-  val scoverageVersion = "2.0.11"
+  val scoverageVersion = "2.1.0"
   val scoverageRuntime = ivy"org.scoverage::scalac-scoverage-runtime:${scoverageVersion}"
 }
 
