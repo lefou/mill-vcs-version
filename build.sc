@@ -22,7 +22,7 @@ lazy val baseDir = build.millSourcePath
 trait Deps {
   def millPlatform: String
   def millVersion: String
-  def scalaVersion: String = "2.13.12"
+  def scalaVersion: String = "2.13.13"
   def testWithMill: Seq[String]
 
   def mimaPreviousVersions: Seq[String] = Seq()
