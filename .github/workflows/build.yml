@@ -63,6 +63,7 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           files: ./out/core/0.11/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.10/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.9/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.7/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.6/scoverage/xmlReport.dest/scoverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
         continue-on-error: true
 
   checks:
