@@ -28,7 +28,7 @@ trait Deps {
   def mimaPreviousVersions: Seq[String] = Seq()
 
   val millMain = ivy"com.lihaoyi::mill-main:${millVersion}"
-  val scalaTest = ivy"org.scalatest::scalatest:3.2.18"
+  val scalaTest = ivy"org.scalatest::scalatest:3.2.19"
   val scoverageVersion = "2.1.1"
   val scoverageRuntime = ivy"org.scoverage::scalac-scoverage-runtime:${scoverageVersion}"
 }
