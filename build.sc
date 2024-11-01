@@ -22,7 +22,7 @@ lazy val baseDir = build.millSourcePath
 trait Deps {
   def millPlatform: String
   def millVersion: String
-  def scalaVersion: String = "2.13.14"
+  def scalaVersion: String = "2.13.15"
   def testWithMill: Seq[String]
 
   def mimaPreviousVersions: Seq[String] = Seq()
@@ -36,6 +36,12 @@ trait Deps {
 class Deps_latest(override val millVersion: String) extends Deps {
   override def millPlatform = millVersion
   override def testWithMill = Seq(millVersion)
+  override def mimaPreviousVersions = Seq()
+}
+object Deps_0_12 extends Deps {
+  override def millPlatform = "0.12"
+  override def millVersion = "0.12.0" // scala-steward:off
+  override def testWithMill = Seq("0.12.1", millVersion)
   override def mimaPreviousVersions = Seq()
 }
 object Deps_0_11 extends Deps {
@@ -81,7 +87,7 @@ lazy val latestDeps: Seq[Deps] = {
   else Seq()
 }
 
-lazy val crossDeps: Seq[Deps] = (Seq(Deps_0_11, Deps_0_10, Deps_0_9, Deps_0_7, Deps_0_6) ++ latestDeps).distinct
+lazy val crossDeps: Seq[Deps] = (Seq(Deps_0_12, Deps_0_11, Deps_0_10, Deps_0_9, Deps_0_7, Deps_0_6) ++ latestDeps).distinct
 lazy val millApiVersions = crossDeps.map(x => x.millPlatform -> x)
 lazy val millItestVersions = crossDeps.flatMap(x => x.testWithMill.map(_ -> x))
 

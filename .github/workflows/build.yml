@@ -20,6 +20,21 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         java-version: [8, 11, 17]
+        mill-version:
+          - full: "0.12.1"
+            binary: "0.12"
+          - full: "0.12.0"
+            binary: "0.12"
+          - full: "0.11.8"
+            binary: "0.11"
+          - full: "0.11.0"
+            binary: "0.11"
+          - full: "0.10.15"
+            binary: "0.10"
+          - full: "0.10.5"
+            binary: "0.10"
+          - full: "0.10.0"
+            binary: "0.10"
 
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.os == 'windows-latest' }}
@@ -41,15 +56,15 @@ jobs:
       - run: ./millw.bat -i findLatestMill --toFile MILL_DEV_VERSION
         if: matrix.os == 'windows-latest' && github.event_name == 'workflow_dispatch'
 
-      - run: ./millw -i __.publishLocal testRepo
+      - run: ./millw -i core[${{ matrix.mill-version.binary }}].publishLocal
         if: matrix.os != 'windows-latest'
-      - run: .\millw.bat -i __.publishLocal testRepo
+      - run: .\millw.bat -i core[${{ matrix.mill-version.binary }}].publishLocal
         if: matrix.os == 'windows-latest'
         shell: cmd
 
-      - run: ./millw -i -k __.testCached
+      - run: ./millw -i -j1 -k itest[${{ matrix.mill-version.full }}].testCached
         if: matrix.os != 'windows-latest'
-      - run: ./millw.bat -i -k __.testCached
+      - run: ./millw.bat -i -j1 -k itest[${{ matrix.mill-version.full }}].testCached
         if: matrix.os == 'windows-latest'
         shell: cmd
 
@@ -62,7 +77,7 @@ jobs:
       - name: Upload scoverage reports to codecov.io
         uses: codecov/codecov-action@v4
         with:
-          files: ./out/core/0.11/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.10/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.9/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.7/scoverage/xmlReport.dest/scoverage.xml,./out/core/0.6/scoverage/xmlReport.dest/scoverage.xml
+          files: ./out/core/${{ matrix.mill-version.binary }}/scoverage/xmlReport.dest/scoverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
         continue-on-error: true
 
@@ -105,9 +120,9 @@ jobs:
       - run: ./millw.bat -i findLatestMill --toFile MILL_DEV_VERSION
         if: matrix.os == 'windows-latest' && github.event_name == 'workflow_dispatch'
 
-      - run: ./millw -i __.publishLocal $(pwd)/testRepo
+      - run: ./millw -i __.publishLocal --localIvyRepo $(pwd)/testRepo
         if: matrix.os != 'windows-latest'
-      - run: .\millw.bat -i __.publishLocal %GITHUB_WORKSPACE%/testRepo
+      - run: .\millw.bat -i __.publishLocal --localIvyRepo %GITHUB_WORKSPACE%/testRepo
         if: matrix.os == 'windows-latest'
         shell: cmd
 
