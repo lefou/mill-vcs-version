@@ -11,7 +11,7 @@ def baseDir = build.millSourcePath
 
 def initVcs: T[Unit] = T {
   if (!os.exists(baseDir / ".git")) {
-    T.log.info("Initializing git repo...")
+    T.log.info(s"Initializing git repo in ${baseDir}")
     Seq(
       os.proc("git", "init"),
       os.proc("git", "config", "user.email", "mill@tototec.de"),
