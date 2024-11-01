@@ -23,17 +23,9 @@ jobs:
         mill-version:
           - full: "0.12.1"
             binary: "0.12"
-          - full: "0.12.0"
-            binary: "0.12"
           - full: "0.11.8"
             binary: "0.11"
-          - full: "0.11.0"
-            binary: "0.11"
           - full: "0.10.15"
-            binary: "0.10"
-          - full: "0.10.5"
-            binary: "0.10"
-          - full: "0.10.0"
             binary: "0.10"
 
     runs-on: ${{ matrix.os }}
