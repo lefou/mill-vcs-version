@@ -3,7 +3,7 @@ package de.tobiasroeser.mill.vcs.version
 import mill.T
 import mill.api.Logger
 import mill.define.{Discover, ExternalModule, Input, Module}
-import os.SubprocessException
+import os.{CommandResult, Shellable, SubprocessException}
 
 import scala.util.control.NonFatal
 
@@ -18,11 +18,13 @@ trait VcsVersion extends Module {
    */
   def vcsState: Input[VcsState] = T.input { calcVcsState(T.log) }
 
+  def runGit(args: Shellable*): CommandResult = os.proc(Seq[Shellable]("git") ++ args).call(cwd = vcsBasePath, stderr = os.Pipe)
+
   private[this] def calcVcsState(logger: Logger): VcsState = {
     logger.error(s"vcsBasePath: ${vcsBasePath}")
     val curHeadRaw =
       try {
-        Option(os.proc("git", "rev-parse", "HEAD").call(cwd = vcsBasePath, stderr = os.Pipe).out.trim())
+        Option(runGit("rev-parse", "HEAD").out.trim())
       } catch {
         case e: SubprocessException =>
           logger.error(s"${vcsBasePath} is not a git repository.")
@@ -40,11 +42,7 @@ trait VcsVersion extends Module {
           try {
             curHead
               .map(curHead =>
-                os.proc("git", "describe", "--exact-match", "--tags", "--always", curHead)
-                  .call(cwd = vcsBasePath, stderr = os.Pipe)
-                  .out
-                  .text()
-                  .trim
+                runGit("describe", "--exact-match", "--tags", "--always", curHead).out.text().trim
               )
               .filter(_.nonEmpty)
           } catch {
@@ -54,11 +52,7 @@ trait VcsVersion extends Module {
         val lastTag: Option[String] = exactTag.orElse {
           try {
             Option(
-              os.proc("git", "describe", "--abbrev=0", "--tags")
-                .call(stderr = os.Pipe)
-                .out
-                .text()
-                .trim()
+              runGit("describe", "--abbrev=0", "--tags").out.text().trim()
             )
               .filter(_.nonEmpty)
           } catch {
@@ -71,8 +65,7 @@ trait VcsVersion extends Module {
           else {
             curHead
               .map { curHead =>
-                os.proc(
-                  "git",
+                runGit(
                   "rev-list",
                   curHead,
                   lastTag match {
@@ -80,15 +73,12 @@ trait VcsVersion extends Module {
                     case _         => Seq()
                   },
                   "--count"
-                ).call(stderr = os.Pipe)
-                  .out
-                  .trim()
-                  .toInt
+                ).out.trim().toInt
               }
               .getOrElse(0)
           }
 
-        val dirtyHashCode: Option[String] = Option(os.proc("git", "diff").call(stderr = os.Pipe).out.text().trim()).flatMap {
+        val dirtyHashCode: Option[String] = Option(runGit("diff").out.text().trim()).flatMap {
           case "" => None
           case s  => Some(Integer.toHexString(s.hashCode))
         }
