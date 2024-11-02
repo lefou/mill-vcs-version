@@ -90,17 +90,20 @@ If you witness confusing behavior in a CI environment, it's likely due to limite
 E.g. on Github, the default setup for `action/checkout` fetches only 50 commit back from the current version. That means, once your last tag is older than that, you will get strange version numbers, probably starting with `0.0.0`.
 
 So, in your CI setup, make sure to:
+
 * git checkout the complete history
 * git checkout all tags
 
 For Github Actions, make sure all instances of `action/checkout` use the following setup.
 
-```yaml
+[source,yaml]
+----
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           # next line is redundant as it's the default
           fetch-tags: true 
+----
 
 == License
 
@@ -109,16 +112,16 @@ This project is published under the https://www.apache.org/licenses/LICENSE-2.0[
 
 == About
 
-mill::
-  https://github.com/lihaoyi/mill[Mill] is a Scala-based open source build tool.
+Mill::
+  https://github.com/com-lihaoyi/mill[Mill] is a Scala-based open source build tool.
   In my opinion the best build tool for the JVM.
   It is fast, reliable and easy to understand.
 
-me::
+Me::
 +
 --
 https://github.com/lefou/[I'm] a professional software developer and love to write and use open source software.
-I'm actively developing and maintaining mill as well as https://github.com/lefou?utf8=%E2%9C%93&tab=repositories&q=topic%3Amill&type=&language=[several mill plugins].
+I'm actively developing and maintaining Mill as well as https://github.com/lefou?utf8=%E2%9C%93&tab=repositories&q=topic%3Amill&type=&language=[several Mill plugins].
 
 If you like my work, please star it on GitHub. You can also support me via https://github.com/sponsors/lefou[GitHub Sponsors].
 --
