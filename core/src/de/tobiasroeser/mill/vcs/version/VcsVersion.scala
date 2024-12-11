@@ -18,7 +18,7 @@ trait VcsVersion extends Module {
    */
   def vcsState: Input[VcsState] = T.input { calcVcsState(T.log) }
 
-  private[this] def calcVcsState(logger: Logger): VcsState = {
+  def calcVcsState(logger: Logger): VcsState = {
     val curHeadRaw =
       try {
         Option(os.proc("git", "rev-parse", "HEAD").call(cwd = vcsBasePath, stderr = os.Pipe).out.trim())
