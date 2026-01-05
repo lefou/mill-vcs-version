@@ -87,7 +87,7 @@ trait VcsVersion extends Module {
               .getOrElse(0)
           }
 
-        val dirtyHashCode: Option[String] = Option(os.proc("git", "diff")
+        val dirtyHashCode: Option[String] = Option(os.proc("git", "diff", "HEAD")
                                                      .call(cwd = vcsBasePath, stderr = os.Pipe)
                                                      .out.text().trim()).flatMap {
           case "" => None
